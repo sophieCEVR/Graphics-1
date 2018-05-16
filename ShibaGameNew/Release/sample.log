@@ -1,0 +1,18 @@
+﻿  Character.cpp
+\\ueahome4\stusci4\jxy13mmu\data\ntprofile\desktop\shibagamenew\Character.h(24): warning C4305: 'initializing': truncation from 'double' to 'float'
+Character.cpp(99): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+Character.cpp(136): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Character.cpp(149): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Chompsky.cpp
+\\ueahome4\stusci4\jxy13mmu\data\ntprofile\desktop\shibagamenew\Character.h(24): warning C4305: 'initializing': truncation from 'double' to 'float'
+Chompsky.cpp(139): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Hanzo.cpp
+\\ueahome4\stusci4\jxy13mmu\data\ntprofile\desktop\shibagamenew\Character.h(24): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Main.cpp
+\\ueahome4\stusci4\jxy13mmu\data\ntprofile\desktop\shibagamenew\Character.h(24): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating code
+  2 of 31 functions ( 6.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  sample.vcxproj -> \\ueahome4\stusci4\jxy13mmu\data\NTProfile\Desktop\ShibaGameNew\Release\sample.exe

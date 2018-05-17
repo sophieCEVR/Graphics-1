@@ -37,6 +37,7 @@ Menu::~Menu()
 }
 
 void Menu::init(int screenHeight, int screenWidth) {
+	PlaySound("audio/Carefree.wav", NULL, SND_ASYNC);
 	this->screenHeight = screenHeight;
 	this->screenWidth = screenWidth;
 	menu1 = loadPNG("textures/menus/menu1.png");

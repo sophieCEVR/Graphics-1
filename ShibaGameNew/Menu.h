@@ -3,6 +3,7 @@
 #include "OBB.h"						//Object Bounding Box header file allows for OBB calculations
 #include <windows.h>		// Header file for Windows
 #include <iostream>
+#include <Mmsystem.h>
 
 class Menu
 {

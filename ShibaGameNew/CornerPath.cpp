@@ -23,10 +23,10 @@ void CornerPath::init() {
 		pathOBB.vertOriginal[1].x = 0;
 		pathOBB.vertOriginal[1].y = tileHeight;
 
-		pathOBB.vertOriginal[2].x = tileWidth / 4;
+		pathOBB.vertOriginal[2].x = tileWidth / 6;
 		pathOBB.vertOriginal[2].y = tileHeight;
 
-		pathOBB.vertOriginal[3].x = tileWidth / 4;
+		pathOBB.vertOriginal[3].x = tileWidth / 6;
 		pathOBB.vertOriginal[3].y = 0;
 	}
 	else if (charPassed == ']') { //right path
@@ -37,10 +37,10 @@ void CornerPath::init() {
 		pathOBB.vertOriginal[1].x = tileWidth;
 		pathOBB.vertOriginal[1].y = tileHeight;
 
-		pathOBB.vertOriginal[2].x = (tileHeight / 4) * 3;
+		pathOBB.vertOriginal[2].x = (tileWidth / 6) * 6;
 		pathOBB.vertOriginal[2].y = tileHeight;
 
-		pathOBB.vertOriginal[3].x = (tileHeight / 4) * 3;
+		pathOBB.vertOriginal[3].x = (tileWidth / 6) * 6;
 		pathOBB.vertOriginal[3].y = 0;
 	}
 	else if (charPassed == '-') { //top path
@@ -49,10 +49,10 @@ void CornerPath::init() {
 		pathOBB.vertOriginal[0].y = tileHeight;
 
 		pathOBB.vertOriginal[1].x = tileWidth;
-		pathOBB.vertOriginal[1].y = (tileHeight / 4) * 3;
+		pathOBB.vertOriginal[1].y = (tileHeight / 6) * 6;
 
 		pathOBB.vertOriginal[2].x = 0;
-		pathOBB.vertOriginal[2].y = (tileHeight / 4) * 3;
+		pathOBB.vertOriginal[2].y = (tileHeight / 6) * 6;
 
 		pathOBB.vertOriginal[3].x = 0;
 		pathOBB.vertOriginal[3].y = tileHeight;
@@ -63,10 +63,10 @@ void CornerPath::init() {
 		pathOBB.vertOriginal[0].y = 0;
 
 		pathOBB.vertOriginal[1].x = tileWidth;
-		pathOBB.vertOriginal[1].y = tileHeight / 4;
+		pathOBB.vertOriginal[1].y = tileHeight / 6;
 
 		pathOBB.vertOriginal[2].x = 0;
-		pathOBB.vertOriginal[2].y = tileHeight / 4;
+		pathOBB.vertOriginal[2].y = tileHeight / 6;
 
 		pathOBB.vertOriginal[3].x = 0;
 		pathOBB.vertOriginal[3].y = 0;
@@ -76,10 +76,10 @@ void CornerPath::init() {
 		pathOBB.vertOriginal[0].x = 0;
 		pathOBB.vertOriginal[0].y = tileHeight;
 
-		pathOBB.vertOriginal[1].x = tileWidth / 4;
+		pathOBB.vertOriginal[1].x = tileWidth / 6;
 		pathOBB.vertOriginal[1].y = tileHeight;
 
-		pathOBB.vertOriginal[2].x = tileWidth / 4;
+		pathOBB.vertOriginal[2].x = tileWidth / 6;
 		pathOBB.vertOriginal[2].y = (tileHeight / 4) * 3;
 
 		pathOBB.vertOriginal[3].x = 0;

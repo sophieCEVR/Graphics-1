@@ -12,6 +12,7 @@
 #include "HUD.h"
 #include "Node.h"
 #include "Menu.h"
+#include <Mmsystem.h>
 #include <string>
 #include <cstdlib>
 #include <math.h>			// Header File For Maths Functions
@@ -47,7 +48,13 @@ bool lastBackward = false;
 bool lastLeft = false;
 bool lastRight = false;
 bool healthRemoved = false;
-bool miniGame = false;
+bool miniGameBool = false;
+bool pancakesClicked = false;
+bool cakeClicked = false;
+bool doughnutsClicked = false;
+bool catClicked = false;
+bool miniGameWin = false;
+bool miniGameLoss = false;
 
 Menu* menu = new Menu();
 Map* map;
@@ -62,6 +69,9 @@ HUD* hud;
 //OPENGL FUNCTION PROTOTYPES
 
 GLuint loadPNG(char* name);
+GLuint miniGameTexture = 0;
+GLuint miniGameTextureWin = 0;
+GLuint miniGameTextureLoss = 0;
 
 void init();										//called in winmain when the program starts.
 void display();										//called in winmain to draw everything to the screen
@@ -72,11 +82,40 @@ void collisionChecking();							//collision handling
 void winCondition(int winType);						//method to process different win conditions
 void lossCondition(int lossType);					//method to process different loss conditions
 void startNewGame();
+void miniGameDisplay();
+void miniGameUpdate();
+
+GLuint loadPNGMap(char* name)
+{
+	// Texture loading object
+	nv::Image img;
+
+	GLuint myTextureID;
+
+	// Return true on success
+	if (img.loadImageFromFile(name))
+	{
+		glGenTextures(1, &myTextureID);
+		glBindTexture(GL_TEXTURE_2D, myTextureID);
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		glTexImage2D(GL_TEXTURE_2D, 0, img.getInternalFormat(), img.getWidth(), img.getHeight(), 0, img.getFormat(), img.getType(), img.getLevel(0));
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+	}
+
+	else
+		MessageBox(NULL, "Failed to load texture", "End of the world", MB_OK | MB_ICONINFORMATION);
+
+	return myTextureID;
+}
 
 void display(){
-	if(!miniGame){
-		glClear(GL_COLOR_BUFFER_BIT);
-		glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
+	if(!miniGameBool){
 		map->display();
 		player1->display();
 		if (twoPlayerGame) {
@@ -87,16 +126,33 @@ void display(){
 			owner->display();
 		}
 	}
+	else {
+		miniGameDisplay();
+	}
 }
 
 //updates variables based on user interaction
 void update()
 {// Get the current time
-	if (!miniGame) {
+	if (!miniGameBool) {
 		if (health <= 0) {
 			lossCondition(1);
 		}
 		if (gameActive) {
+			if (chompsky->chompskyActive) {
+				list<MiniGameBarn*> mgList;
+				for (MapObject* m : map->objectList) {
+					MiniGameBarn* mg = dynamic_cast<MiniGameBarn*>(m);
+					if (mg) {
+						mgList.push_back(mg);
+					}
+				}
+
+				for (MiniGameBarn* mg : mgList) {
+					mg->objTexture = mg->textureOpen;
+				}
+
+			}
 			LARGE_INTEGER t;
 			QueryPerformanceCounter(&t);
 			__int64 currentTime = t.QuadPart;
@@ -107,7 +163,12 @@ void update()
 			prevTime = currentTime;					// use the current time as the previous time in the next step
 			if (player1->spacePressed) {
 				boostActivated = true;
-				boost = 0;
+				if (!miniGameWin) {
+					boost = 0;
+				}
+				else {
+					boost = 3;
+				}
 			}
 			if (boostActivated && timer < 3) {
 				timer += deltaT;
@@ -117,7 +178,6 @@ void update()
 				player1->spacePressed = false;
 				timer = 0;
 			}
-			//if(player1->boost ==true)
 			owner->update(keys);
 			player1->update(keys);
 			if (twoPlayerGame) {
@@ -170,10 +230,13 @@ void update()
 			collisionChecking();
 		}
 	}
+	else {
+
+	}
 }
 
 void processKeys(){
-	if (!miniGame) {
+	if (!miniGameBool) {
 		if (gameActive) {
 			player1->processKeys(keys, boost);
 			if (twoPlayerGame) {
@@ -188,12 +251,12 @@ void processKeys(){
 }
 
 void init() {
-	glClearColor(0.0, 0.5, 0.0, 0.0); 
-	reshape(innerWidth, innerHeight);
+	glClearColor(0.0, 0.5, 0.0, 0.0);
+	miniGameTextureWin = loadPNG("textures/menus/miniGameWin.png");
+	miniGameTextureLoss = loadPNG("textures/menus/miniGameLoss.png");
+	miniGameTexture = loadPNG("textures/menus/miniGame.png");
 	reshape(innerWidth, innerHeight);
 	menu->init(innerHeight, innerWidth);
-
-
 }
 
 void startNewGame() {
@@ -214,7 +277,7 @@ void startNewGame() {
 		boost = 0;
 }
 void collisionChecking() {
-	if (!miniGame) {
+	if (!miniGameBool) {
 		/*********************************************************/
 						//edge of path collisions
 		/*********************************************************/
@@ -357,9 +420,16 @@ void collisionChecking() {
 		}
 		for (MiniGameBarn* mg : mgList) {
 			if (mg->mgOBB.SAT2D((player1->charOBB)) && chompsky->chompskyActive) {
-				cout << "in the barn" << endl; 
-				mg->mgOBB.drawOBB();
-				glColor3f(1.0, 0.0, 0.0);
+				//mg->mgOBB.drawOBB();
+				miniGameBool = true;
+				PlaySound("audio/dogNoise.wav", NULL, SND_ASYNC);
+				miniGameDisplay();
+				//glColor3f(1.0, 0.0, 0.0);
+			}
+			if (mg->mgOBB.SAT2D((player1->charOBB)) && !chompsky->chompskyActive) {
+				player1->collideUp = true;
+				//mg->mgOBB.drawOBB();
+			//	glColor3f(1.0, 0.0, 0.0);
 			}
 		}
 		/*********************************************************/
@@ -475,6 +545,111 @@ void lossCondition(int lossType) {
 	menu->display(screenHeight, screenWidth);
 }
 
+void miniGameDisplay() {
+	glPushMatrix();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glColor3f(1.0, 1.0, 0.0);
+		glEnable(GL_TEXTURE_2D);
+
+		if (!miniGameWin && !miniGameLoss) {
+			glBindTexture(GL_TEXTURE_2D, miniGameTexture);
+		}
+		else if (miniGameLoss && !miniGameWin) {
+			glBindTexture(GL_TEXTURE_2D, miniGameTextureLoss);
+		}
+		else if (!miniGameLoss && miniGameWin) {
+			glBindTexture(GL_TEXTURE_2D, miniGameTextureWin);
+		}
+		glBegin(GL_QUADS);
+			glTexCoord2f(0.0, 0.0); glVertex2f(-screenWidth / 4, 0);
+			glTexCoord2f(0.0, 1.0); glVertex2f(-screenWidth / 4, screenHeight / 2);
+			glTexCoord2f(1.0, 1.0); glVertex2f(screenWidth / 4, screenHeight / 2);
+			glTexCoord2f(1.0, 0.0); glVertex2f(screenWidth / 4, 0);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
+	glPopMatrix();
+}
+
+void miniGameUpdate() {
+	std::cout << "mouseX : " << mouse_x << "     mouseY : " << mouse_y << std::endl;
+	if (catClicked) {
+		miniGameLoss = true;
+		if ((mouse_x > 860 && mouse_x < 1560) && (mouse_y > 110 && mouse_y < 265) && LeftPressed) {
+			chompsky->chompskyActive = false;
+			miniGameBool = false;
+
+			catClicked = false;
+			pancakesClicked = false;
+			cakeClicked = false;
+			doughnutsClicked = false;
+
+			PlaySound("audio/Metal_Race.wav", NULL, SND_ASYNC);
+			player1->Ychar = player1->Ychar - 2; 
+			list<MiniGameBarn*> mgList;
+			for (MapObject* m : map->objectList) {
+				MiniGameBarn* mg = dynamic_cast<MiniGameBarn*>(m);
+				if (mg) {
+					mgList.push_back(mg);
+				}
+			}
+
+			for (MiniGameBarn* mg : mgList) {
+				mg->objTexture = map->miniGameBarnClosed;
+			}
+		}
+	}
+	else if (pancakesClicked && cakeClicked && doughnutsClicked) {
+		miniGameWin = true;
+		if ((mouse_x > 110 && mouse_x < 820) && (mouse_y > 25 && mouse_y < 150) && LeftPressed) {
+			chompsky->chompskyActive = false;
+
+			catClicked = false;
+			pancakesClicked = false;
+			cakeClicked = false;
+			doughnutsClicked = false;
+
+
+			boost = 3;
+			miniGameBool = false;
+			PlaySound("audio/Metal_Race.wav", NULL, SND_ASYNC);
+			player1->Ychar = player1->Ychar - 2;
+			list<MiniGameBarn*> mgList;
+			for (MapObject* m : map->objectList) {
+				MiniGameBarn* mg = dynamic_cast<MiniGameBarn*>(m);
+				if (mg) {
+					mgList.push_back(mg);
+				}
+			}
+
+			for (MiniGameBarn* mg : mgList) {
+				mg->objTexture = map->miniGameBarnClosed;
+			}
+
+		}
+	}
+	else {
+		if ((mouse_x > 585 && mouse_x < 945) && (mouse_y > 355 && mouse_y < 710) && LeftPressed) {
+			std::cout << "pancakesClicked" << std::endl;
+			pancakesClicked = true;
+		}
+		else if ((mouse_x > 520 && mouse_x < 950) && (mouse_y > 90 && mouse_y < 330) && LeftPressed) {
+			std::cout << "cakeClicked" << std::endl;
+			cakeClicked = true;
+		}
+		else if ((mouse_x > 990 && mouse_x < 1490) && (mouse_y > 135 && mouse_y < 345) && LeftPressed) {
+			std::cout << "doughnutsClicked" << std::endl;
+			doughnutsClicked = true;
+		}
+		else if ((mouse_x > 990 && mouse_x < 1450) && (mouse_y > 355 && mouse_y < 710) && LeftPressed) {
+			std::cout << "catClicked" << std::endl;
+			catClicked = true;
+		}
+	}
+}
 
 /*************    START OF OPENGL FUNCTIONS   ****************/
 void reshape(int width, int height)		// Resize the OpenGL window
@@ -533,7 +708,7 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	{
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
-			if (menu->quit)
+			if (menu->quit && !gameActive)
 				done = true;
 			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
 			{
@@ -553,8 +728,17 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 			processKeys();			//process keyboard
 			
 			if (gameActive) {
+				if (miniGameBool) {
+					reshape(screenWidth, screenHeight);
+				}
 				display();					// Draw The Scene
-				update();					// update variables
+
+				if (miniGameBool) {
+					miniGameUpdate();					// update variables
+				}
+				else {
+					update();					// update variables
+				}
 			}
 			else {
 				reshape(screenWidth, screenHeight);
@@ -565,6 +749,9 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 				if (gameActive) {
 					menu->singlePlayerActivated = false;
 					menu->twoPlayerActivated = false;
+					PlaySound("audio/Metal_Race.wav", NULL, SND_ASYNC);
+					miniGameLoss = false;
+					miniGameWin = false;
 					startNewGame();
 				}
 			}

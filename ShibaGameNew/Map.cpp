@@ -192,13 +192,13 @@ void Map::mapGenerator() {
 
 	for (Path* p : pList) {
 		if (p->yPosition > 7) {
-			int chance = (rand() % 1);
-			if (chance == 0) {
+			int chance = (rand() % 120);
+			if (chance == 20) {
 				itemList.push_back(new Bone(p->xPosition, p->yPosition, bone));
 			}
-			/*else if (chance == 10) {
+			else if (chance == 10) {
 				itemList.push_back(new Heart(p->xPosition, p->yPosition, heart));
-			}*/
+			}
 		}
 	}
 	for (MapObject* m : objectList) {

@@ -97,7 +97,7 @@ void Map::display()
 		i->display();
 	}
 
-	for (Node *n : nodeList) {
+	for (Node *n : nodeVector) {
 		n->display();
 	}
 }
@@ -108,6 +108,7 @@ void Map::mapGenerator() {
 	int notPath = 0;
 	string currentLine = "";
 	ifstream myfile("MapTexts/map1.txt");
+	bool alreadySet = false;
 	if (myfile.is_open())
 	{
 		while (myfile.peek() != EOF)
@@ -115,7 +116,7 @@ void Map::mapGenerator() {
 			getline(myfile, currentLine);
 			for(int i = 1; i<137;i++){
 
-				nodeList.push_back(new Node(i, lineCount));
+			//	nodeVector.push_back(new Node(i, lineCount));
 				bool pathFound = false;
 				randomize++;
 				srand((time(NULL)*i)*(time(NULL)*randomize));
@@ -124,12 +125,18 @@ void Map::mapGenerator() {
 					objectList.push_back(new House(i, lineCount, housesVector.at(rand() % housesVector.size())));
 					i+=7;
 				}
+				else if (currentLine[i] == 'm') {//miniGameBarn
+					objectList.push_back(new MiniGameBarn(i, lineCount, miniGameBarnClosed));
+					i += 7;
+				}
 				else if (currentLine[i] == 'b') {
 					objectList.push_back(new Bush(i, lineCount, bushVector.at(rand() % bushVector.size())));
 				}
 				else if (currentLine[i] == 'p') {
-					if (lineCount == 1) {
-					//	itemList.push_back(new Chicken(i, lineCount, chicken));
+					nodeVector.push_back(new Node(i, lineCount, false));
+					if (lineCount == 1 && !alreadySet) {
+						nodeVector.at(i-1)->isStartNode = true;
+						alreadySet = true;
 					}
 					objectList.push_back(new Path(i, lineCount, pathVector.at(rand() % pathVector.size())));
 					chickenX = i;
@@ -161,13 +168,17 @@ void Map::mapGenerator() {
 				if (pathFound = false) {
 					notPath++;
 				}
+				if (currentLine[i] != 'p') {
+					nodeVector.push_back(new Node(i, lineCount, true));
+				}
 			}
 			lineCount++;
 		}
 		if (chickenX % 2 != 0) {
 			chickenX++;
 		}
-		chickenPointer = new Chicken((chickenX/2)+notPath, lineCount, chicken);
+		chickenPointer = new Chicken((chickenX/2)+notPath, lineCount-1, chicken);
+		nodeVector.at(((chickenX / 2) + notPath)+((lineCount-5)*137)-94)->isFinishNode = true; //what????????????????????????????????????????????????????????????????????????
 		itemList.push_back(chickenPointer);
 		myfile.close();
 	}
@@ -181,13 +192,19 @@ void Map::mapGenerator() {
 
 	for (Path* p : pList) {
 		if (p->yPosition > 7) {
-			int chance = (rand() % 120);
-			if (chance == 1) {
+			int chance = (rand() % 1);
+			if (chance == 0) {
 				itemList.push_back(new Bone(p->xPosition, p->yPosition, bone));
 			}
-			else if (chance == 10) {
+			/*else if (chance == 10) {
 				itemList.push_back(new Heart(p->xPosition, p->yPosition, heart));
-			}
+			}*/
+		}
+	}
+	for (MapObject* m : objectList) {
+		MiniGameBarn* mg = dynamic_cast<MiniGameBarn*>(m);
+		if (mg) {
+			mg->importOpenTexture(miniGameBarnOpen);
 		}
 	}
 }
@@ -220,6 +237,8 @@ void Map::init()
 		cornerPathVector.push_back(bush = loadPNG(char_array_cpath));
 	}
 
+	miniGameBarnClosed = loadPNG("textures/MinigameBarns/Closed.png");
+	miniGameBarnOpen = loadPNG("textures/MinigameBarns/Open.png");
 	bone = loadPNG("textures/Items/bone.png");
 	chicken = loadPNG("textures/Items/chicken.png");
 	heart = loadPNG("textures/Items/heart.png");

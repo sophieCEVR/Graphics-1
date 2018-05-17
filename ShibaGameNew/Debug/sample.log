@@ -1,17 +1,6 @@
-﻿  Node.cpp
-p:\graphics\shibagamenew\node.cpp(47): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\node.cpp(50): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\node.cpp(51): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\node.cpp(52): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-  Map.cpp
-p:\graphics\shibagamenew\map.cpp(121): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-p:\graphics\shibagamenew\map.cpp(201): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(132): note: see declaration of 'strcpy'
-p:\graphics\shibagamenew\map.cpp(207): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(132): note: see declaration of 'strcpy'
-p:\graphics\shibagamenew\map.cpp(213): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(132): note: see declaration of 'strcpy'
-p:\graphics\shibagamenew\map.cpp(219): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(132): note: see declaration of 'strcpy'
-  Generating Code...
+﻿  Menu.cpp
+p:\graphics\shibagamenew\menu.cpp(81): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(82): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(83): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(84): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
   sample.vcxproj -> P:\graphics\ShibaGameNew\Debug\sample.exe

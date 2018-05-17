@@ -53,7 +53,7 @@ void HUD::display() {
 	else if (health == 1) {
 		glBindTexture(GL_TEXTURE_2D, heartHalf);
 	}
-	else if (health == 0) {
+	else if (health <= 0) {
 		glBindTexture(GL_TEXTURE_2D, heartEmpty);
 	}
 

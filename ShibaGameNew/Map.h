@@ -15,6 +15,7 @@
 #include "Heart.h"
 #include "Chicken.h"
 #include "Node.h"
+#include "MiniGameBarn.h"
 #include <list>
 
 //#include "Main.cpp"
@@ -33,6 +34,8 @@ public:
 	GLuint bone = 0;
 	GLuint heart = 0;
 	GLuint chicken = 0;
+	GLuint miniGameBarnOpen = 0;
+	GLuint miniGameBarnClosed = 0;
 
 	int randomize = 0;
 
@@ -47,12 +50,12 @@ public:
 	GLuint loadPNGMap(char * name);
 	list<MapObject*> objectList;
 	list<Item*> itemList;
-	list<Node*> nodeList;
 	Chicken* chickenPointer;
 	vector<GLuint> housesVector;
 	vector<GLuint> pathVector;
 	vector<GLuint> cornerPathVector;
 	vector<GLuint> bushVector;
+	vector<Node*> nodeVector;
 	void display();
 	void init();
 	void mapGenerator();

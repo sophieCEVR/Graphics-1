@@ -82,15 +82,6 @@ void MapObject::display() {
 
 }
 
-void MapObject::init() {
-	//sleep_for(nanoseconds(10));
-	/*
-	srand((time(NULL)*yObj)*(time(NULL)*xObj));
-	textureSource = textureSource + to_string((rand()*(rand())) % textureCount + 1) + ".png";*/
-	//char char_array[23];
-	//strcpy(char_array, textureSource.c_str());
-	//objTexture = loadPNG(char_array);
-	//objTexture = textureSource;
-}
+void MapObject::init() {}
 
 void MapObject::additionalDisplay() {}

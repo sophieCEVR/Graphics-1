@@ -24,7 +24,11 @@ public:
 	int distance = 0;						//gives distance between two points.
 	int boostMeter = 0;
 
-	double deltaT;
+	//Timing related variables
+	__int64 prevTime = 0;				// Previous count
+	double timerFrequencyRecip = 0.0000005;
+	//double deltaT = 0;
+	float timer = 0;
 
 	float charMatrix[16];
 	float characterMovementSpeed = 0.8f;	//movement speed for specified character, differs how quickly the character animation works, how quickly the character moves its legs
@@ -47,6 +51,8 @@ public:
 	bool collideUp = false;
 	bool collideDown = false;
 	bool spacePressed = false;
+	bool collisionBoost = false;
+	bool stunned = false;
 
 	//float values for vertex creation based on characters current direction 
 	float Xfb1 = 0;							//X axis int #1 when facing forward/backwards
@@ -75,6 +81,8 @@ public:
 	GLuint r2 = 0;							//GLuint identifying texture 2 of 4 to be used when facing right.
 	GLuint r3 = 0;							//GLuint identifying texture 3 of 4 to be used when facing right.
 	GLuint r4 = 0;							//GLuint identifying texture 4 of 4 to be used when facing right.
+	GLuint v1 = 0;							//GLuint identifying texture 1 of 2 to be used when stunned.
+	GLuint v2 = 0;							//GLuint identifying texture 2 of 2 to be used when stunned.
 
 	//OBB declaration
 	OBB charOBB;							//allows for use of oriented bounding box collision detection 

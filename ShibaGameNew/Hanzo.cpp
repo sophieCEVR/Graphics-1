@@ -105,8 +105,21 @@ void Hanzo::additionalDisplay()
 }
 
 //
-//void Hanzo::init()
-//{
+void Hanzo::additionalInit()
+{
+
+	//stunned
+
+	char char_arrayv1[23];
+	texture = textureSource + textureFolder + "/v1.png";
+	strcpy(char_arrayv1, texture.c_str());
+	v1 = loadPNG(char_arrayv1);
+
+	char char_arrayv2[23];
+	texture = textureSource + textureFolder + "/v2.png";
+	strcpy(char_arrayv2, texture.c_str());
+	v2 = loadPNG(char_arrayv2);
+}
 	////glClearColor(0.0, 0.5, 0.0, 0.0);
 
 	///********************************shiba png loading**************************************/
@@ -152,17 +165,19 @@ void Hanzo::additionalDisplay()
 Hanzo::~Hanzo() {}
 
 void Hanzo::additionalProcessKeys(bool keys[256]) {
-	//cout << spacePressed << endl;
 	if (boostMeter == 3) {
 		if (keys[VK_SPACE]) {
 			spacePressed = true;
 		}
 	}
-	if (spacePressed == true) {
-		movementSpeed = 6;
+	if (spacePressed && !collisionBoost) {
+		movementSpeed = 10;
+	}	
+	else if (spacePressed && collisionBoost) {
+		movementSpeed = 0;
 	}
 	else {
-		movementSpeed = 2;
+		movementSpeed = 6;
 	}
 	if (lead && distance<160) {
 		if (keys[leftPress])

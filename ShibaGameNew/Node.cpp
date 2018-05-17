@@ -27,13 +27,13 @@
 //	return myTextureID;
 //}
 
-Node::Node(int xPosition, int yPosition)
+Node::Node(int xPosition, int yPosition, bool obstacle)
 {
 	this->xPosition = xPosition;
 	this->yPosition = yPosition;
 	xPos = width*xPosition;
 	yPos = height*yPosition;
-
+	isObstacle = obstacle;
 }
 
 
@@ -42,16 +42,25 @@ Node::~Node()
 }
 
 void Node::display() {
-
-	glPushMatrix();
-	glTranslatef(xPos, yPos, 0.0);
-	glBegin(GL_LINE_LOOP);
-		 glVertex2f(0, 0);
-		 glVertex2f(0, height);
-		 glVertex2f(width, height);
-		 glVertex2f(width, 0);
-	glEnd();
-	glPopMatrix();
+	
+	//glPushMatrix();
+	//if (isStartNode || isFinishNode) {
+	//	glColor3f(0.0, 1.0, 0.0);
+	//}
+	//else if (!isObstacle){
+	//	glColor3f(0.0, 0.0, 1.0);
+	//}
+	//else {
+	//	glColor3f(1.0, 0.0, 0.0);
+	//}
+	//glTranslatef(xPos, yPos, 0.0);
+	//glBegin(GL_LINE_LOOP);
+	//	 glVertex2f(0, 0);
+	//	 glVertex2f(0, height);
+	//	 glVertex2f(width, height);
+	//	 glVertex2f(width, 0);
+	//glEnd();
+	//glPopMatrix();
 
 }
 //	nodes - new sNode[nMapWidth * nMapHeight];

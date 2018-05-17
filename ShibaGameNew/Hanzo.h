@@ -24,6 +24,7 @@ public:
 
 	Hanzo();							//constructor
 	void additionalDisplay();
+	void additionalInit();
 	~Hanzo();							//deconstructor
 	//void init();						//load on initialising method
 	void additionalProcessKeys(bool keys[256]);					//key presses specific to hanzo character

@@ -39,6 +39,7 @@ void Character::display() {
 
 			glEnable(GL_TEXTURE_2D);
 
+			glBindTexture(GL_TEXTURE_2D, r1);
 			if (stepCounter <= 10) {
 				if (forward) {
 					glBindTexture(GL_TEXTURE_2D, f1);
@@ -94,6 +95,35 @@ void Character::display() {
 				else if (right) {
 					glBindTexture(GL_TEXTURE_2D, r4);
 				}
+			}
+			double deltaT = 0;
+
+			LARGE_INTEGER t;
+			QueryPerformanceCounter(&t);
+			__int64 currentTime = t.QuadPart;
+
+			__int64 ticksElapsed = currentTime - prevTime;					// Ticks elapsed since the previous time step
+			deltaT = double(ticksElapsed) * timerFrequencyRecip;		// Convert to second
+
+			prevTime = currentTime;					// use the current time as the previous time in the next step
+
+			if (stunned) {
+
+				//std::cout << timer << std::endl;
+
+				timer += deltaT;
+				if (timer <= 0.5 || (timer >=1.0  && timer <= 1.5) || timer >=2) {
+					glBindTexture(GL_TEXTURE_2D, v1);
+				}
+				else{
+					glBindTexture(GL_TEXTURE_2D, v2);
+				}
+				if (timer > 2.5) {
+					stunned = false;
+				}
+			}
+			else {
+				timer = 0;
 			}
 			if (stepCounter > 39.00) {
 				stepCounter = 0.00;
@@ -230,7 +260,8 @@ void Character::init(){
 	char char_arrayr4[23];
 	texture = textureSource + textureFolder + "/r4.png";
 	strcpy(char_arrayr4, texture.c_str());
-	r4 = loadPNG(char_arrayr4);
+	r4 = loadPNG(char_arrayr4);	
+
 
 	/**********************************************************************************************/
 	//OBB init
@@ -256,36 +287,38 @@ void Character::additionalInit() {}
 void Character::processKeys(bool keys[256], int boostMeterIn) {
 	boostMeter = boostMeterIn;
 //	std::cout << boostMeter << std::endl;
-	if (keys[leftPress] || keys[rightPress] || keys[upPress] || keys[downPress])
-	{
-		stepCounter = stepCounter + characterMovementSpeed;
+	if (!stunned) {
+		if (keys[leftPress] || keys[rightPress] || keys[upPress] || keys[downPress])
+		{
+			stepCounter = stepCounter + characterMovementSpeed;
+		}
+		if (keys[leftPress])
+		{
+			forward = false;
+			backward = false;
+			left = true;
+			right = false;
+		}
+		else if (keys[rightPress]) {
+			forward = false;
+			backward = false;
+			left = false;
+			right = true;
+		}
+		else if (keys[upPress]) {
+			forward = true;
+			backward = false;
+			left = false;
+			right = false;
+		}
+		else if (keys[downPress]) {
+			forward = false;
+			backward = true;
+			left = false;
+			right = false;
+		}
+		additionalProcessKeys(keys);
 	}
-	if (keys[leftPress])
-	{
-		forward = false;
-		backward = false;
-		left = true;
-		right = false;
-	}
-	else if (keys[rightPress]) {
-		forward = false;
-		backward = false;
-		left = false;
-		right = true;
-	}
-	else if (keys[upPress]) {
-		forward = true;
-		backward = false;
-		left = false;
-		right = false;
-	}
-	else if (keys[downPress]) {
-		forward = false;
-		backward = true;
-		left = false;
-		right = false;
-	}
-	additionalProcessKeys(keys);
 }
 
 void Character::additionalProcessKeys(bool keys[256]) {}

@@ -17,7 +17,7 @@ public:
 	GLuint chicken = 0;
 	GLuint boostBar = 0;
 
-	int health = 3;
+	int health = 0;
 	int boost = 0;
 
 	int screenWidth = 0;

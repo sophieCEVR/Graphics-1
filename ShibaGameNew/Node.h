@@ -7,7 +7,7 @@
 class Node
 {
 public:
-	Node(int xPosition, int YPosition);
+	Node(int xPosition, int YPosition, bool obstacle);
 	~Node();
 	//void init();
 	//void update();
@@ -22,6 +22,7 @@ public:
 	bool isANeighbour = false;
 	bool isStartNode = false;
 	bool isFinishNode = false;
+	bool isObstacle = true;
 	int distanceToGoal;
 	int distanceToStart;
 	int totalFromBoth;

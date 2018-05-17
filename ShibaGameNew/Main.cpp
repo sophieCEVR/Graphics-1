@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "HUD.h"
 #include "Node.h"
+#include "Menu.h"
 #include <string>
 #include <cstdlib>
 #include <math.h>			// Header File For Maths Functions
@@ -18,9 +19,10 @@
 
 //Screen settings
 int screenWidth = 1600, screenHeight = 900;
+int innerWidth, innerHeight;
 int	mouse_x = 0, mouse_y = 0;
-int health = 3;
-int boost = 3;
+int health = 6;
+int boost = 0;
 
 __int64 prevTime = 0;				// Previous count
 // Timer 
@@ -35,17 +37,25 @@ float speed = 0; //check if i need this
 float XviewZoomout = 4;
 float YviewZoomout = 2;
 
-bool keys[256];
-bool Player2 = false;
-bool boostActivated = false;
+bool gameActive = false;
 bool LeftPressed = false;
+bool keys[256];
+bool twoPlayerGame = false;
+bool boostActivated = false;
+bool lastForward = false;
+bool lastBackward = false;
+bool lastLeft = false;
+bool lastRight = false;
+bool healthRemoved = false;
+bool miniGame = false;
 
-Map* map = new Map();
-Character* player1 = new Hanzo();
-Character* player2 = new Player2Hanzo();
-Character* chompsky = new Chompsky();
-Character* owner = new Owner();
-HUD* hud = new HUD(health, boost, screenWidth, screenHeight);
+Menu* menu = new Menu();
+Map* map;
+Hanzo* player1;
+Character* player2;
+Chompsky* chompsky;
+Character* owner;
+HUD* hud;
 
 
 
@@ -58,302 +68,413 @@ void display();										//called in winmain to draw everything to the screen
 void update();										//called in winmain to update variables
 void reshape(int width, int height);				//called when the window is resized
 void processKeys();								    //called in winmain to process keyboard input
-void collisionChecking();
-
-/****************************Texture loading method used throughout******************************************/
-GLuint loadPNG(char* name)
-{
-	// Texture loading object
-	nv::Image img;
-
-	GLuint myTextureID;
-
-	// Return true on success
-	if (img.loadImageFromFile(name))
-	{
-		glGenTextures(1, &myTextureID);
-		glBindTexture(GL_TEXTURE_2D, myTextureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-		glTexImage2D(GL_TEXTURE_2D, 0, img.getInternalFormat(), img.getWidth(), img.getHeight(), 0, img.getFormat(), img.getType(), img.getLevel(0));
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
-	}
-
-	else
-		MessageBox(NULL, "Failed to load texture", "End of the world", MB_OK | MB_ICONINFORMATION);
-
-	return myTextureID;
-}
+void collisionChecking();							//collision handling
+void winCondition(int winType);						//method to process different win conditions
+void lossCondition(int lossType);					//method to process different loss conditions
+void startNewGame();
 
 void display(){
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
-	map->display();
-	player1->display();
-	if (Player2) {
-		player2->display();
+	if(!miniGame){
+		glClear(GL_COLOR_BUFFER_BIT);
+		glLoadIdentity();
+		map->display();
+		player1->display();
+		if (twoPlayerGame) {
+			player2->display();
+		}
+		else {
+			chompsky->display();
+			owner->display();
+		}
 	}
-	else {
-		chompsky->display();
-		owner->display();
-	}
-	//hud->display();
 }
 
 //updates variables based on user interaction
 void update()
 {// Get the current time
-	LARGE_INTEGER t;
-	QueryPerformanceCounter(&t);
-	__int64 currentTime = t.QuadPart;
+	if (!miniGame) {
+		if (health <= 0) {
+			lossCondition(1);
+		}
+		if (gameActive) {
+			LARGE_INTEGER t;
+			QueryPerformanceCounter(&t);
+			__int64 currentTime = t.QuadPart;
 
-	__int64 ticksElapsed = currentTime - prevTime;					// Ticks elapsed since the previous time step
-	deltaT = double(ticksElapsed) * timerFrequencyRecip;		// Convert to second
+			__int64 ticksElapsed = currentTime - prevTime;					// Ticks elapsed since the previous time step
+			deltaT = double(ticksElapsed) * timerFrequencyRecip;		// Convert to second
 
-	prevTime = currentTime;					// use the current time as the previous time in the next step
-	if (player1->spacePressed){
-		boostActivated = true;
-		boost = 0;
+			prevTime = currentTime;					// use the current time as the previous time in the next step
+			if (player1->spacePressed) {
+				boostActivated = true;
+				boost = 0;
+			}
+			if (boostActivated && timer < 3) {
+				timer += deltaT;
+			}
+			else if (boostActivated && timer >= 3) {
+				boostActivated = false;
+				player1->spacePressed = false;
+				timer = 0;
+			}
+			//if(player1->boost ==true)
+			owner->update(keys);
+			player1->update(keys);
+			if (twoPlayerGame) {
+				player2->update(keys);
+			}
+
+			float hanzoX = player1->Xchar;
+			float hanzoY = player1->Ychar;
+			if (!twoPlayerGame) {
+				chompsky->Xobject = hanzoX;
+				chompsky->Yobject = hanzoY;
+				chompsky->update(keys);
+			}
+
+			hud->update(health, boost, hanzoX, hanzoY, screenWidth, screenHeight);
+
+			glMatrixMode(GL_PROJECTION);						// select the projection matrix stack
+			glLoadIdentity();									// reset the top of the projection matrix to an identity matrix
+			Hanzo* hanzoView = dynamic_cast<Hanzo*>(player1);
+			if (hanzoView->lead) {
+				gluOrtho2D(-screenWidth / 4 + hanzoX, screenWidth / 4 + hanzoX, hanzoY - 300, screenHeight / 2 + (hanzoY - 300));           // set the coordinate system for the window
+			}
+			else if (XviewZoomout > 2.3) {
+				XviewZoomout -= 0.003;
+				YviewZoomout -= 0.0015;
+			}
+			//std::cout << YviewZoomout << std::endl;
+			//	std::cout << XviewZoomout << std::endl;
+
+			if (!hanzoView->lead) {
+				gluOrtho2D(-screenWidth / XviewZoomout + hanzoX, screenWidth / XviewZoomout + hanzoX, hanzoY - 300, screenHeight / YviewZoomout + (hanzoY - 300));
+			}
+
+			//if(hanzo->charOBB==CornerPath->objectOBB)
+
+			glMatrixMode(GL_MODELVIEW);							// Select the modelview matrix stack
+			glLoadIdentity();									// Reset the top of the modelview matrix to an identity matrix
+
+			player1->collideRight = false;
+			player1->collideUp = false;
+			player1->collideDown = false;
+			player1->collideLeft = false;
+
+			if (twoPlayerGame) {
+				player2->collideRight = false;
+				player2->collideUp = false;
+				player2->collideDown = false;
+				player2->collideLeft = false;
+			}
+			collisionChecking();
+		}
 	}
-	if (boostActivated && timer<3) {
-		cout << timer << endl; 
-		timer += deltaT;
-	}
-	else if(boostActivated && timer>=3){
-		boostActivated = false;
-		player1->spacePressed = false;
-		timer = 0; 
-	}
-	//if(player1->boost ==true)
-	owner->update(keys);
-	player1->update(keys);
-	if (Player2) {
-		player2->update(keys);
-	}
-
-	float hanzoX = player1->Xchar;
-	float hanzoY = player1->Ychar;
-	if(!Player2) {
-		chompsky->Xobject = hanzoX;
-		chompsky->Yobject = hanzoY;
-		chompsky->update(keys);
-	}
-
-	hud->update(health, boost, hanzoX, hanzoY, screenWidth, screenHeight);
-
-	glMatrixMode(GL_PROJECTION);						// select the projection matrix stack
-	glLoadIdentity();									// reset the top of the projection matrix to an identity matrix
-	Hanzo* hanzoView = dynamic_cast<Hanzo*>(player1);
-	if (hanzoView->lead) {
-		gluOrtho2D(-screenWidth / 4 + hanzoX, screenWidth / 4 + hanzoX, hanzoY - 300, screenHeight / 2 + (hanzoY - 300));           // set the coordinate system for the window
-	}
-	else if (XviewZoomout>2.3){
-		XviewZoomout -= 0.003;
-		YviewZoomout -= 0.0015;
-	}
-	//std::cout << YviewZoomout << std::endl;
-//	std::cout << XviewZoomout << std::endl;
-
-	if (!hanzoView->lead) {
-		gluOrtho2D(-screenWidth / XviewZoomout + hanzoX, screenWidth / XviewZoomout + hanzoX, hanzoY - 300, screenHeight / YviewZoomout + (hanzoY - 300));
-	}
-
-	//if(hanzo->charOBB==CornerPath->objectOBB)
-
-	glMatrixMode(GL_MODELVIEW);							// Select the modelview matrix stack
-	glLoadIdentity();									// Reset the top of the modelview matrix to an identity matrix
-
-	player1->collideRight = false;
-	player1->collideUp = false;
-	player1->collideDown = false;
-	player1->collideLeft = false;
-
-	if (Player2) {
-		player2->collideRight = false;
-		player2->collideUp = false;
-		player2->collideDown = false;
-		player2->collideLeft = false;
-	}
-	collisionChecking();
 }
 
 void processKeys(){
-	player1->processKeys(keys, boost);
-	if (Player2) {
-		player2->processKeys(keys, boost);
-	}
-	else {
-		chompsky->processKeys(keys, boost);
-		owner->processKeys(keys, boost);
+	if (!miniGame) {
+		if (gameActive) {
+			player1->processKeys(keys, boost);
+			if (twoPlayerGame) {
+				player2->processKeys(keys, boost);
+			}
+			else {
+				chompsky->processKeys(keys, boost);
+				owner->processKeys(keys, boost);
+			}
+		}
 	}
 }
 
-void init(){
-	glClearColor(0.0, 0.5, 0.0, 0.0);
-	map->init();
-	player1->init();
-	player2->init();
-	chompsky->init();
-	owner->init();
-	hud->init();
+void init() {
+	glClearColor(0.0, 0.5, 0.0, 0.0); 
+	reshape(innerWidth, innerHeight);
+	reshape(innerWidth, innerHeight);
+	menu->init(innerHeight, innerWidth);
+
+
 }
 
+void startNewGame() {
+		map = new Map();
+		player1 = new Hanzo();
+		player2 = new Player2Hanzo();
+		chompsky = new Chompsky();
+		owner = new Owner();
+		hud = new HUD(health, boost, screenWidth, screenHeight);
+		delete menu;
+		map->init();
+		player1->init();
+		player2->init();
+		chompsky->init();
+		owner->init();
+		hud->init();
+		health = 6;
+		boost = 0;
+}
 void collisionChecking() {
-	/*********************************************************/
-					//edge of path collisions
-	/*********************************************************/
-	list<CornerPath*> cpList;
-	for(MapObject* m : map->objectList){
-		CornerPath* cp = dynamic_cast<CornerPath*>(m);
-		if (cp) {
-			cpList.push_back(cp);
-		}
-	}
-	
-	for (CornerPath* cp : cpList) {
-		if (cp->pathOBB.SAT2D((player1->charOBB))) {
-			//hanzo->collide = true;
-			glColor3f(1.0, 0.0, 0.0);
-			cp->pathOBB.drawOBB();
-			if (cp->charPassed == '[') {//left
-				player1->collideLeft = true;
-			}
-			else if (cp->charPassed == ']') {//right
-				player1->collideRight = true;
-			}
-			else if (cp->charPassed == '-') {//top path
-				player1->collideUp = true;
-			}
-			else if (cp->charPassed == '~') { //bottom path
-				player1->collideDown = true;
-			}
-			else if (cp->charPassed == '`') { //top left corner path
-				player1->collideUp = true;
-				player1->collideLeft = true;
-			}
-			else if (cp->charPassed == '"') { //top right corner path
-				player1->collideUp = true;
-				player1->collideRight = true;
-			}
-			else if (cp->charPassed == ',') { //bottom left corner
-				player1->collideDown = true;
-				player1->collideLeft = true;
-			}
-			else if (cp->charPassed == '.') { //bottom right corner
-				player1->collideDown = true;
-				player1->collideRight = true;
+	if (!miniGame) {
+		/*********************************************************/
+						//edge of path collisions
+		/*********************************************************/
+		list<CornerPath*> cpList;
+		for (MapObject* m : map->objectList) {
+			CornerPath* cp = dynamic_cast<CornerPath*>(m);
+			if (cp) {
+				cpList.push_back(cp);
 			}
 		}
 
-		if (Player2) {
-			if (cp->pathOBB.SAT2D((player2->charOBB))) {
+		for (CornerPath* cp : cpList) {
+			if (cp->pathOBB.SAT2D((player1->charOBB))) {
 				//hanzo->collide = true;
+				glColor3f(1.0, 0.0, 0.0);
+				cp->pathOBB.drawOBB();
 				if (cp->charPassed == '[') {//left
-					player2->collideLeft = true;
+					player1->collideLeft = true;
 				}
 				else if (cp->charPassed == ']') {//right
-					player2->collideRight = true;
+					player1->collideRight = true;
 				}
 				else if (cp->charPassed == '-') {//top path
-					player2->collideUp = true;
+					player1->collideUp = true;
 				}
 				else if (cp->charPassed == '~') { //bottom path
-					player2->collideDown = true;
+					player1->collideDown = true;
 				}
 				else if (cp->charPassed == '`') { //top left corner path
-					player2->collideUp = true;
-					player2->collideLeft = true;
+					player1->collideUp = true;
+					player1->collideLeft = true;
 				}
 				else if (cp->charPassed == '"') { //top right corner path
-					player2->collideUp = true;
-					player2->collideRight = true;
+					player1->collideUp = true;
+					player1->collideRight = true;
 				}
 				else if (cp->charPassed == ',') { //bottom left corner
-					player2->collideDown = true;
-					player2->collideLeft = true;
+					player1->collideDown = true;
+					player1->collideLeft = true;
 				}
 				else if (cp->charPassed == '.') { //bottom right corner
-					player2->collideDown = true;
-					player2->collideRight = true;
+					player1->collideDown = true;
+					player1->collideRight = true;
+				}
+				if (player1->spacePressed) {
+
+					lastForward = player1->forward;
+					lastBackward = player1->backward;
+					lastLeft = player1->left;
+					lastRight = player1->right;
+
+					LARGE_INTEGER t;
+					QueryPerformanceCounter(&t);
+					__int64 currentTime = t.QuadPart;
+
+					__int64 ticksElapsed = currentTime - prevTime;					// Ticks elapsed since the previous time step
+					deltaT = double(ticksElapsed) * timerFrequencyRecip;			// Convert to second
+
+					prevTime = currentTime;											// use the current time as the previous time in the next step
+					if (timer < 3) {
+						player1->collisionBoost = true;
+						player1->stunned = true;
+						player1->forward = false;
+						player1->backward = false;
+						player1->left = false;
+						player1->right = false;
+
+					}
+					else if (timer >= 3) {
+						player1->collisionBoost = false;
+						player1->stunned = false;
+
+						player1->forward = lastForward;
+						player1->backward = lastBackward;
+						player1->left = lastLeft;
+						player1->right = lastRight;
+
+						lastForward = false;
+						lastBackward = false;
+						lastLeft = false;
+						lastRight = false;
+						if (!healthRemoved) {
+							health = health - 2;
+							healthRemoved = true;
+						}
+					}
+				}
+				else {
+					healthRemoved = false;
+					timer = 0;
+				}
+			}
+
+			if (twoPlayerGame) {
+				if (cp->pathOBB.SAT2D((player2->charOBB))) {
+					//hanzo->collide = true;
+					if (cp->charPassed == '[') {//left
+						player2->collideLeft = true;
+					}
+					else if (cp->charPassed == ']') {//right
+						player2->collideRight = true;
+					}
+					else if (cp->charPassed == '-') {//top path
+						player2->collideUp = true;
+					}
+					else if (cp->charPassed == '~') { //bottom path
+						player2->collideDown = true;
+					}
+					else if (cp->charPassed == '`') { //top left corner path
+						player2->collideUp = true;
+						player2->collideLeft = true;
+					}
+					else if (cp->charPassed == '"') { //top right corner path
+						player2->collideUp = true;
+						player2->collideRight = true;
+					}
+					else if (cp->charPassed == ',') { //bottom left corner
+						player2->collideDown = true;
+						player2->collideLeft = true;
+					}
+					else if (cp->charPassed == '.') { //bottom right corner
+						player2->collideDown = true;
+						player2->collideRight = true;
+					}
 				}
 			}
 		}
-	}
 
 
-	/*********************************************************/
-						//item collisions
-	/*********************************************************/
+		/*********************************************************/
+							//MiniGameBarn collisions
+		/*********************************************************/
 
-	//heart collision 
-	list<Heart*> hList;
-	for (Item* i : map->itemList) {
-		Heart* h = dynamic_cast<Heart*>(i);
-		if (h) {
-			hList.push_back(h);
-		}
-	}
-
-	for (Heart* h : hList) {
-		if (h->itemOBB.SAT2D((player1->charOBB))) {
-			if (health != 6) {
-				health++;
+		list<MiniGameBarn*> mgList;
+		for (MapObject* m : map->objectList) {
+			MiniGameBarn* mg = dynamic_cast<MiniGameBarn*>(m);
+			if (mg) {
+				mgList.push_back(mg);
 			}
-			h->~Heart();
+		}
+		for (MiniGameBarn* mg : mgList) {
+			if (mg->mgOBB.SAT2D((player1->charOBB)) && chompsky->chompskyActive) {
+				cout << "in the barn" << endl; 
+				mg->mgOBB.drawOBB();
+				glColor3f(1.0, 0.0, 0.0);
+			}
+		}
+		/*********************************************************/
+							//item collisions
+		/*********************************************************/
+
+		//heart collision 
+		list<Heart*> hList;
+		for (Item* i : map->itemList) {
+			Heart* h = dynamic_cast<Heart*>(i);
+			if (h) {
+				hList.push_back(h);
+			}
 		}
 
-		if (Player2) {
-			if (h->itemOBB.SAT2D((player2->charOBB))) {
-				if (health != 6) {
+		for (Heart* h : hList) {
+			if (h->itemOBB.SAT2D((player1->charOBB))) {
+				if (health < 6) {
 					health++;
 				}
 				h->~Heart();
 			}
-		}
-	}
-	//bone collision 
-	list<Bone*> bList;
-	for (Item* i : map->itemList) {
-		Bone* b = dynamic_cast<Bone*>(i);
-		if (b) {
-			bList.push_back(b);
-		}
-	}
 
-	for (Bone* b : bList) {
-		if (b->itemOBB.SAT2D((player1->charOBB))) {
-			if (boost != 3) {
-				boost++;
+			if (twoPlayerGame) {
+				if (h->itemOBB.SAT2D((player2->charOBB))) {
+					if (health < 6) {
+						health++;
+					}
+					h->~Heart();
+				}
 			}
-			b->~Bone();
 		}
-		if (Player2) {
-			if (b->itemOBB.SAT2D((player2->charOBB))) {
+		//bone collision 
+		list<Bone*> bList;
+		for (Item* i : map->itemList) {
+			Bone* b = dynamic_cast<Bone*>(i);
+			if (b) {
+				bList.push_back(b);
+			}
+		}
+
+		for (Bone* b : bList) {
+			if (b->itemOBB.SAT2D((player1->charOBB))) {
 				if (boost != 3) {
 					boost++;
 				}
 				b->~Bone();
 			}
+			if (twoPlayerGame) {
+				if (b->itemOBB.SAT2D((player2->charOBB))) {
+					if (boost != 3) {
+						boost++;
+					}
+					b->~Bone();
+				}
+			}
 		}
-	}
 
 
-	//Chicken collision 
+		//Chicken collision 
 
-	if (map->chickenPointer->itemOBB.SAT2D((player1->charOBB))) {
-		glColor3f(1.0, 0.0, 0.0);
-		map->chickenPointer->itemOBB.drawOBB();
-	}
-	if(Player2) {
-		if ((map->chickenPointer->itemOBB.SAT2D((player2->charOBB)))) {
-			glColor3f(0.0, 1.0, 0.0);
+		if (map->chickenPointer->itemOBB.SAT2D((player1->charOBB))) {
+			glColor3f(1.0, 0.0, 0.0);
 			map->chickenPointer->itemOBB.drawOBB();
+			cout << "This game is a piece of shit" << endl;
+			winCondition(1);
+		}
+		if (twoPlayerGame) {
+			if ((map->chickenPointer->itemOBB.SAT2D((player2->charOBB)))) {
+				glColor3f(0.0, 1.0, 0.0);
+				map->chickenPointer->itemOBB.drawOBB();
+				winCondition(2);
+			}
 		}
 	}
 }
+
+void winCondition(int winType) {
+	gameActive = false;
+	delete map;
+	delete player1;
+	delete player2;
+	delete chompsky;
+	delete owner;
+	menu = new Menu();
+	menu->init(screenHeight, screenWidth);
+	if (winType == 1 && !twoPlayerGame) {//player 1 got the chicken 
+		cout << "you got the chicken!" << endl;
+		menu->outcomeCard = 1;
+	}
+	//if (winType == 1 && twoPlayerGame) {//player 1 got the chicken playing 2 player mode
+	//	cout << "Player 1 beat player 2 !" << endl;
+	//}
+	//if (winType == 2) {//player 2 got the chicken playing 2 player mode
+	//	cout << "Player 2 beat player 1 !" << endl;
+	//}
+	menu->display(screenHeight, screenWidth);
+}
+
+void lossCondition(int lossType) {
+	gameActive = false;
+	delete map;
+	delete player1;
+	delete player2;
+	delete chompsky;
+	delete owner;
+	menu = new Menu();
+	menu->init(screenHeight, screenWidth);
+	if (lossType == 1 && !twoPlayerGame) {//player 1 got the chicken 
+		cout << "you ran out of health :( !" << endl;
+		menu->outcomeCard = 2;
+	}
+	menu->display(screenHeight, screenWidth);
+}
+
 
 /*************    START OF OPENGL FUNCTIONS   ****************/
 void reshape(int width, int height)		// Resize the OpenGL window
@@ -412,6 +533,8 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 	{
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
+			if (menu->quit)
+				done = true;
 			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
 			{
 				done=true;							// If So done=TRUE
@@ -429,8 +552,22 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 
 			processKeys();			//process keyboard
 			
-			display();					// Draw The Scene
-			update();					// update variables
+			if (gameActive) {
+				display();					// Draw The Scene
+				update();					// update variables
+			}
+			else {
+				reshape(screenWidth, screenHeight);
+				menu->display(screenHeight, screenWidth);
+				menu->update(mouse_x, mouse_y, LeftPressed);
+				gameActive = menu->singlePlayerActivated;
+				twoPlayerGame = menu->twoPlayerActivated;
+				if (gameActive) {
+					menu->singlePlayerActivated = false;
+					menu->twoPlayerActivated = false;
+					startNewGame();
+				}
+			}
 			SwapBuffers(hDC);				// Swap Buffers (Double Buffering)
 		}
 	}
@@ -656,7 +793,8 @@ bool CreateGLWindow(char* title, int width, int height)
 	SetForegroundWindow(hWnd);						// Slightly Higher Priority
 	SetFocus(hWnd);									// Sets Keyboard Focus To The Window
 	reshape(width, height);					// Set Up Our Perspective GL Screen
-
+	innerWidth = width;
+	innerHeight = height;
 	init();
 	
 	return true;									// Success

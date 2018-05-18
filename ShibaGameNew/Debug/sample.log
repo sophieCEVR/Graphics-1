@@ -1,9 +1,6 @@
-﻿  Main.cpp
-p:\graphics\shibagamenew\main.cpp(189): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-p:\graphics\shibagamenew\main.cpp(223): warning C4305: '-=': truncation from 'double' to 'float'
-p:\graphics\shibagamenew\main.cpp(224): warning C4305: '-=': truncation from 'double' to 'float'
-p:\graphics\shibagamenew\main.cpp(952): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\main.cpp(953): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\main.cpp(954): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
-p:\graphics\shibagamenew\main.cpp(955): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+﻿  Menu.cpp
+p:\graphics\shibagamenew\menu.cpp(91): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(92): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(93): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
+p:\graphics\shibagamenew\menu.cpp(94): warning C4244: 'argument': conversion from 'int' to 'GLfloat', possible loss of data
   sample.vcxproj -> P:\graphics\ShibaGameNew\Debug\sample.exe

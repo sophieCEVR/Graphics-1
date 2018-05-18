@@ -197,7 +197,7 @@ void Map::mapGenerator() {
 			chickenX++;
 		}
 		chickenPointer = new Chicken((chickenX/2)+notPath, lineCount-1, chicken);
-		std::cout << "chickenX : " << chickenX << " notPath : " << notPath << " lineCount : " << lineCount << std::endl;
+		//std::cout << "chickenX : " << chickenX << " notPath : " << notPath << " lineCount : " << lineCount << std::endl;
 		nodeVector.at(((chickenX / 2) )+(135*(lineCount-1)))->isFinishNode = true;
 		itemList.push_back(chickenPointer);
 		myfile.close();
@@ -214,7 +214,9 @@ void Map::mapGenerator() {
 		if (p->yPosition > 7) {
 			int chance = (rand() % 120);
 			if (chance == 20) {
-				itemList.push_back(new Bone(p->xPosition, p->yPosition, bone));
+				if (!twoPlayerGame) {
+					itemList.push_back(new Bone(p->xPosition, p->yPosition, bone));
+				}
 			}
 			else if (chance == 10) {
 				itemList.push_back(new Heart(p->xPosition, p->yPosition, heart));

@@ -38,6 +38,7 @@ public:
 	int yItem = 0;
 	//bool debug = true;
 
+	bool twoPlayer = false;
 	/***********************************************************************************************/
 	/*											 METHODS										   */
 	/***********************************************************************************************/
@@ -46,6 +47,7 @@ public:
 	void display();
 	void init();
 	void update(int health, int boost, float windowRepositionX, float windowRepositionY, int screenWidthIn, int screenHeightIn);
+	void setTwoPlayer();
 	GLuint loadPNG(char * name);
 };
 

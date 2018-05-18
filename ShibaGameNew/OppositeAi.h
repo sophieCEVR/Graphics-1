@@ -4,6 +4,7 @@ class OppositeAi :
 	public dumbAI
 {
 public:
+	bool lead = false;
 	OppositeAi();
 	~OppositeAi();
 

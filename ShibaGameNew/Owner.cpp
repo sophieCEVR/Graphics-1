@@ -60,6 +60,12 @@ void Owner::init()
 {
 	//glClearColor(0.0, 0.5, 0.0, 0.0);{
 
+	Xchar = 100;						//starting x position for specified character
+	Ychar = 100;					//starting y position for specified character
+	forward = false;					//preset to false, will be true when a key has been pressed which moves the character this direction. Used in texture control.
+	backward = true;					//preset to false, will be true when a key has been pressed which moves the character this direction. Used in texture control.
+	left = false;						//preset to false, will be true when a key has been pressed which moves the character this direction. Used in texture control.
+	right = false;						//preset to false, will be true when a key has been pressed which moves the character this direction. Used in texture control.
 
 	/********************************Owner png loading**************************************/
 

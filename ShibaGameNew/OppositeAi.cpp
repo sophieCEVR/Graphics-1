@@ -16,7 +16,7 @@ OppositeAi::OppositeAi()
 	Xlr2 = 32.5;							//X axis int #2 when facing left/right
 	Ylr1 = 38;							//y axis int #1 when facing left/right
 	Ylr2 = 20;							//y axis int #2 when facing left/right
-	textureFolder = "AI1";
+	textureFolder = "AI2";
 	movementSpeed = 6;
 }
 
@@ -41,83 +41,85 @@ void OppositeAi::additionalUpdate() {
 	//	right = false;
 	//	Xchar -= movementSpeed;
 	//}
-	if (Ychar < Yobject) {
-		if (distance > 300) {
-			if (!collideUp) {
-				forward = true;
-				backward = false;
-				left = false;
-				right = false;
-				Ychar += movementSpeed;
-			}
-			else if (!collideRight) {
-				//if (collideLeft) {
-				//	Xchar += 2;
-				//}
-				forward = false;
-				backward = false;
-				left = false;
-				right = true;
-				Xchar += movementSpeed;
-			}
-			else if (!collideDown) {
-				//if (collideLeft) {
-				//}
-				additionalAIProcessing();
-				forward = false;
-				backward = true;
-				left = false;
-				right = false;
-				Ychar -= movementSpeed;
-			}
-			else if (!collideLeft) {
-				//if (collideUp) {
-				//	Ychar -= 2;
-				//}
-				forward = false;
-				backward = false;
-				left = true;
-				right = false;
-				Xchar -= movementSpeed;
+	if (!lead) {
+		if (Ychar < Yobject) {
+			if (distance > 300) {
+				if (!collideUp) {
+					forward = true;
+					backward = false;
+					left = false;
+					right = false;
+					Ychar += movementSpeed;
+				}
+				else if (!collideRight) {
+					//if (collideLeft) {
+					//	Xchar += 2;
+					//}
+					forward = false;
+					backward = false;
+					left = false;
+					right = true;
+					Xchar += movementSpeed;
+				}
+				else if (!collideDown) {
+					//if (collideLeft) {
+					//}
+					additionalAIProcessing();
+					forward = false;
+					backward = true;
+					left = false;
+					right = false;
+					Ychar -= movementSpeed;
+				}
+				else if (!collideLeft) {
+					//if (collideUp) {
+					//	Ychar -= 2;
+					//}
+					forward = false;
+					backward = false;
+					left = true;
+					right = false;
+					Xchar -= movementSpeed;
+				}
+				else {
+					forward = true;
+					backward = false;
+					left = false;
+					right = false;
+				}
 			}
 			else {
-				forward = true;
-				backward = false;
-				left = false;
-				right = false;
+				if (Xchar < (Xobject - 5)) {
+					forward = false;
+					backward = false;
+					left = false;
+					right = true;
+					Xchar += movementSpeed;
+				}
+				else if (Xchar > (Xobject + 5)) {
+					forward = false;
+					backward = false;
+					left = true;
+					right = false;
+					Xchar -= movementSpeed;
+				}
+				else if (Ychar > Yobject) {
+					forward = false;
+					backward = true;
+					left = false;
+					right = false;
+					Ychar -= movementSpeed;
+				}
+				else if (Ychar < Yobject) {
+					forward = false;
+					backward = true;
+					left = false;
+					right = false;
+					Ychar += movementSpeed;
+				}
 			}
-		}
-		else {
-			if (Xchar < (Xobject - 5)) {
-				forward = false;
-				backward = false;
-				left = false;
-				right = true;
-				Xchar += movementSpeed;
-			}
-			else if (Xchar >(Xobject + 5)) {
-				forward = false;
-				backward = false;
-				left = true;
-				right = false;
-				Xchar -= movementSpeed;
-			}
-			else if (Ychar > Yobject) {
-				forward = false;
-				backward = true;
-				left = false;
-				right = false;
-				Ychar -= movementSpeed;
-			}
-			else if (Ychar < Yobject) {
-				forward = false;
-				backward = true;
-				left = false;
-				right = false;
-				Ychar += movementSpeed;
-			}
-		}
 
+		}
 	}
 
 }

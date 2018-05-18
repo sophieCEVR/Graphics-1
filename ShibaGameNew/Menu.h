@@ -13,12 +13,16 @@ public:
 	//texture handling variables
 	GLuint menu1 = 0;							//GLuint identifying texture 1 of 4 to be used when facing forward.
 	GLuint menu2 = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
+	GLuint menu3 = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint howToPlay = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint winSingle = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint lossHealth = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint aiWon = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
-	
+
 	bool singlePlayerActivated = false;
+	bool oneAIActivated = false;
+	bool twoAIPlayerActivated = false;
+	bool threeAIPlayerActivated = false;
 	bool twoPlayerActivated = false;
 	bool quit = false;
 	int screenWidth;

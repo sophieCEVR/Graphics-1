@@ -26,7 +26,9 @@ int screenWidth = 1600, screenHeight = 900;
 int innerWidth, innerHeight;
 int	mouse_x = 0, mouse_y = 0;
 int health = 6;
+int health2 = 6;
 int boost = 0;
+int boost2 = 0;
 
 __int64 prevTime = 0;				// Previous count
 // Timer 
@@ -35,6 +37,7 @@ double timerFrequencyRecip = 0.0000005;  // Only needs to be changed to change s
 // Smaller values will slow down the simulation, larger values will speed it up
 double deltaT = 0;
 float timer = 0;
+float timer2 = 0;
 
 float spin = 0;
 float speed = 0; //check if i need this
@@ -46,6 +49,7 @@ bool LeftPressed = false;
 bool keys[256];
 bool twoPlayerGame = false;
 bool boostActivated = false;
+bool boostActivated2 = false;
 bool lastForward = false;
 bool lastBackward = false;
 bool lastLeft = false;
@@ -64,6 +68,9 @@ bool doughnutsClicked = false;
 bool catClicked = false;
 bool miniGameWin = false;
 bool miniGameLoss = false;
+bool singlePlayer1 = false;
+bool singlePlayer2 = false;
+bool singlePlayer3 = false;
 
 Menu* menu = new Menu();
 Map* map;
@@ -72,6 +79,7 @@ Character* player2;
 Chompsky* chompsky;
 Character* owner;
 HUD* hud;
+HUD* hud2;
 dumbAI* ai1;
 FastAI* ai2;
 OppositeAi* ai3;
@@ -194,6 +202,20 @@ void update()
 				chompsky->spacePressed = false;
 				timer = 0;
 			}
+			//if (twoPlayerGame) {
+			//	if (player2->spacePressed) {
+			//		boostActivated2 = true;
+			//		boost2 = 3;
+			//	}
+			//	if (boostActivated2 && timer2 < 3) {
+			//		timer2 += deltaT;
+			//	}
+			//	else if (boostActivated2 && timer2 >= 3) {
+			//		boostActivated2 = false;
+			//		player2->spacePressed = false;
+			//		timer2 = 0;
+			//	}
+			//}
 			owner->update(keys);
 			player1->update(keys);
 			ai1->update(keys);
@@ -205,14 +227,21 @@ void update()
 
 			float hanzoX = player1->Xchar;
 			float hanzoY = player1->Ychar;
+			float player2X;
+			float player2Y;
+			if (twoPlayerGame) {
+				player2X = player2->Xchar;
+				player2Y = player2->Ychar;
+			}
 			if (!twoPlayerGame) {
 				chompsky->Xobject = hanzoX;
 				chompsky->Yobject = hanzoY;
 				chompsky->update(keys);
 			}
-
 			hud->update(health, boost, hanzoX, hanzoY, screenWidth, screenHeight);
-
+			if (twoPlayerGame) {
+				hud2->update(health2, boost2, hanzoX, hanzoY-700, screenWidth, screenHeight);
+			}
 			glMatrixMode(GL_PROJECTION);						// select the projection matrix stack
 			glLoadIdentity();									// reset the top of the projection matrix to an identity matrix
 			Hanzo* hanzoView = dynamic_cast<Hanzo*>(player1);
@@ -290,6 +319,9 @@ void startNewGame() {
 		chompsky = new Chompsky();
 		owner = new Owner();
 		hud = new HUD(health, boost, screenWidth, screenHeight);
+		if (twoPlayerGame) {
+			hud2 = new HUD(health2, boost2, 0, 0);
+		}
 		ai1 = new dumbAI();
 		ai2 = new FastAI();
 		ai3 = new OppositeAi();
@@ -299,7 +331,13 @@ void startNewGame() {
 		player2->init();
 		chompsky->init();
 		owner->init();
-		hud->init();
+		hud->init();		
+		if (twoPlayerGame) {
+			hud2->init();
+			hud2->setTwoPlayer();
+			map->twoPlayerGame = true;
+			hud->setTwoPlayer();
+		}
 		ai1->init();
 		ai1->chickenLocation(map->chickenPointer->xItem, map->chickenPointer->yItem);
 		ai2->init();
@@ -308,6 +346,8 @@ void startNewGame() {
 		ai3->chickenLocation(map->chickenPointer->xItem, map->chickenPointer->yItem);
 		health = 6;
 		boost = 0;
+		health2 = 6;
+		boost2 = 0;
 }
 void collisionChecking() {
 	if (!miniGameBool) {
@@ -430,12 +470,12 @@ void collisionChecking() {
 				}
 			}
 			if (player1->charOBB.SAT2D(ai1->charOBB)) {
-				glColor3f(1.0, 0.0, 0.0);
-				player1->charOBB.drawOBB();
-				ai1->charOBB.drawOBB();
+				//glColor3f(1.0, 0.0, 0.0);
+				//player1->charOBB.drawOBB();
+				//ai1->charOBB.drawOBB();
 				if (!charBouncedAI1) {
-					player1->Xchar += 2;
-					player1->Ychar -= 2;
+					player1->Xchar += 05;
+					player1->Ychar -= 05;
 					charBouncedAI1 = true;
 				}
 				if (!healthRemovedAI1) {
@@ -448,12 +488,12 @@ void collisionChecking() {
 				charBouncedAI1 = false;
 			}
 			if (player1->charOBB.SAT2D(ai2->charOBB)) {
-				glColor3f(1.0, 0.0, 0.0);
-				player1->charOBB.drawOBB();
-				ai2->charOBB.drawOBB();
+				//glColor3f(1.0, 0.0, 0.0);
+				//player1->charOBB.drawOBB();
+				//ai2->charOBB.drawOBB();
 				if (!charBouncedAI2) {
-					player1->Xchar += 2;
-					player1->Ychar -= 2; 
+					player1->Xchar += 05;
+					player1->Ychar -= 05;
 					charBouncedAI2 = true;
 				}
 				if (!healthRemovedAI2) {
@@ -466,12 +506,12 @@ void collisionChecking() {
 				charBouncedAI2 = false;
 			}
 			if (player1->charOBB.SAT2D(ai3->charOBB)) {
-				glColor3f(1.0, 0.0, 0.0);
-				player1->charOBB.drawOBB();
-				ai3->charOBB.drawOBB();
+				//glColor3f(1.0, 0.0, 0.0);
+				//player1->charOBB.drawOBB();
+				//ai3->charOBB.drawOBB();
 				if (!charBouncedAI3) {
-					player1->Xchar += 2;
-					player1->Ychar -= 2;
+					player1->Xchar += 05;
+					player1->Ychar -= 05;
 					charBouncedAI3 = true;
 				}
 				if (!healthRemovedAI3) {
@@ -773,6 +813,56 @@ void collisionChecking() {
 						player2->collideDown = true;
 						player2->collideRight = true;
 					}
+					if (player2->spacePressed) {
+
+						lastForward = player2->forward;
+						lastBackward = player2->backward;
+						lastLeft = player2->left;
+						lastRight = player2->right;
+
+						LARGE_INTEGER t;
+						QueryPerformanceCounter(&t);
+						__int64 currentTime = t.QuadPart;
+
+						__int64 ticksElapsed = currentTime - prevTime;					// Ticks elapsed since the previous time step
+						deltaT = double(ticksElapsed) * timerFrequencyRecip;			// Convert to second
+
+						prevTime = currentTime;											// use the current time as the previous time in the next step
+						if (timer < 3) {
+							player2->collisionBoost = true;
+							player2->stunned = true;
+							player2->forward = false;
+							player2->backward = false;
+							player2->left = false;
+							player2->right = false;
+
+						}
+						else if (timer >= 3) {
+							player2->collisionBoost = false;
+							player2->stunned = false;
+
+							player2->forward = lastForward;
+							player2->backward = lastBackward;
+							player2->left = lastLeft;
+							player2->right = lastRight;
+
+							player2->right = lastRight;
+
+							lastForward = false;
+							lastBackward = false;
+							lastLeft = false;
+							lastRight = false;
+
+							if (!healthRemoved) {
+								health2 = health2 - 2;
+								healthRemoved = true;
+							}
+						}
+					}
+					else {
+						healthRemoved = false;
+						timer = 0;
+					}
 				}
 			}
 		}
@@ -826,8 +916,8 @@ void collisionChecking() {
 
 			if (twoPlayerGame) {
 				if (h->itemOBB.SAT2D((player2->charOBB))) {
-					if (health < 6) {
-						health++;
+					if (health2 < 6) {
+						health2++;
 					}
 					h->~Heart();
 				}
@@ -851,8 +941,8 @@ void collisionChecking() {
 			}
 			if (twoPlayerGame) {
 				if (b->itemOBB.SAT2D((player2->charOBB))) {
-					if (boost != 3) {
-						boost++;
+					if (boost2 != 3) {
+						boost2++;
 					}
 					b->~Bone();
 				}
@@ -1047,17 +1137,17 @@ void miniGameUpdate() {
 void reshape(int width, int height)		// Resize the OpenGL window
 {
 	screenWidth = width; screenHeight = height;           // to ensure the mouse coordinates match 
-														  // we will use these values to set the coordinate system
 
 	glViewport(0, 0, width, height);						// Reset the current viewport
-	//glViewport(0, 0, width/2, height);						// Reset the current viewport
-	//glViewport(width/2, 0, width, height);						// Reset the current viewport
+	
+		//glViewport(width/2, 0, width, height);						// Reset the current viewport
+		//glViewport(0, 0, width/2, height);						// Reset the current viewport
+	
 
 	glMatrixMode(GL_PROJECTION);						// select the projection matrix stack
 	glLoadIdentity();									// reset the top of the projection matrix to an identity matrix
 
-	gluOrtho2D(-screenWidth / 4, screenWidth / 4, 0, screenHeight/2);           // set the coordinate system for the window
-
+	gluOrtho2D(-screenWidth / 4, screenWidth / 4, 0, screenHeight / 2);           // set the coordinate system for the window
 	glMatrixMode(GL_MODELVIEW);							// Select the modelview matrix stack
 	glLoadIdentity();									// Reset the top of the modelview matrix to an identity matrix
 }
@@ -1138,9 +1228,15 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 				menu->update(mouse_x, mouse_y, LeftPressed);
 				gameActive = menu->singlePlayerActivated;
 				twoPlayerGame = menu->twoPlayerActivated;
+				singlePlayer1 = menu->oneAIActivated;
+				singlePlayer2 = menu->twoAIPlayerActivated;
+				singlePlayer3 = menu->threeAIPlayerActivated;
 				if (gameActive) {
 					menu->singlePlayerActivated = false;
 					menu->twoPlayerActivated = false;
+					menu->oneAIActivated = false;
+					menu->twoAIPlayerActivated = false;
+					menu->threeAIPlayerActivated = false;
 					PlaySound("audio/Metal_Race.wav", NULL, SND_ASYNC);
 					miniGameLoss = false;
 					miniGameWin = false;

@@ -150,140 +150,145 @@ void HUD::display() {
 	glDisable(GL_TEXTURE_2D);
 
 	glPopMatrix();
-	/**********************************************************************/
-								//firstBone
-	/**********************************************************************/
+	if(!twoPlayer){
+		/**********************************************************************/
+									//firstBone
+		/**********************************************************************/
 
-	glPushMatrix();
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_TEXTURE_2D);
-	if (boost >= 1) {
-		glBindTexture(GL_TEXTURE_2D, bone);
-	}
-	else if (boost == 0) {
-		glBindTexture(GL_TEXTURE_2D, boneEmpty);
-	}
-
-	/********Position and Sizing ***********/
-	if (screenWidth > 1600) {
-		glTranslatef(((screenWidth / 2)-205) + windowRepositionX, ((screenHeight / 2)-10) + windowRepositionY, 0.0);
-	}
-	else {
-		glTranslatef(((screenWidth / 2) - 185) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
-	}
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
-		glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
-		glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
-		glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
-	glPopMatrix();
-
-	/**********************************************************************/
-								//secondBone
-	/**********************************************************************/
-
-	glPushMatrix();
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_TEXTURE_2D);
-	if (boost >= 2) {
-		glBindTexture(GL_TEXTURE_2D, bone);
-	}
-	else if (boost < 2) {
-		glBindTexture(GL_TEXTURE_2D, boneEmpty);
-	}
-
-	/********Position and Sizing ***********/
-	if (screenWidth > 1600) {
-		glTranslatef(((screenWidth / 2) - 285) + windowRepositionX, ((screenHeight / 2) - 10) + windowRepositionY, 0.0);
-	}
-	else {
-		glTranslatef(((screenWidth / 2) - 260) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
-	}
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
-	glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
-	glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
-	glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
-	glPopMatrix();
-	/**********************************************************************/
-								//thirdBone
-	/**********************************************************************/
-
-	glPushMatrix();
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_TEXTURE_2D);
-
-	if (boost == 3) {
-		glBindTexture(GL_TEXTURE_2D, bone);
-	}
-	else if (boost < 3) {
-		glBindTexture(GL_TEXTURE_2D, boneEmpty);
-	}
-
-	/********Position and Sizing ***********/
-	if (screenWidth > 1600) {
-		glTranslatef(((screenWidth / 2) - 365) + windowRepositionX, ((screenHeight / 2) - 10) + windowRepositionY, 0.0);
-	}
-	else {
-		glTranslatef(((screenWidth / 2) - 335) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
-	}
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
-	glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
-	glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
-	glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
-	glEnd();
-
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
-
-	glPopMatrix();
-
-	if (boost == 3) {
 		glPushMatrix();
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, boostBar);
+		if (boost >= 1) {
+			glBindTexture(GL_TEXTURE_2D, bone);
+		}
+		else if (boost == 0) {
+			glBindTexture(GL_TEXTURE_2D, boneEmpty);
+		}
 
 		/********Position and Sizing ***********/
 		if (screenWidth > 1600) {
-			glTranslatef( windowRepositionX-400, ((-screenHeight / 3)+35) + windowRepositionY, 0.0);
+			glTranslatef(((screenWidth / 2)-205) + windowRepositionX, ((screenHeight / 2)-10) + windowRepositionY, 0.0);
 		}
 		else {
-			glTranslatef( windowRepositionX-400, (-screenHeight / 3 ) + windowRepositionY, 0.0);
+			glTranslatef(((screenWidth / 2) - 185) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
 		}
 		glBegin(GL_QUADS);
-			glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
-			glTexCoord2f(0.0, 1.0); glVertex2f(0, 80);
-			glTexCoord2f(1.0, 1.0); glVertex2f(800, 80);
-			glTexCoord2f(1.0, 0.0); glVertex2f(800, 0);
+			glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
+			glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
+			glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
+			glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
 		glEnd();
 
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 
 		glPopMatrix();
+
+		/**********************************************************************/
+									//secondBone
+		/**********************************************************************/
+
+		glPushMatrix();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D);
+		if (boost >= 2) {
+			glBindTexture(GL_TEXTURE_2D, bone);
+		}
+		else if (boost < 2) {
+			glBindTexture(GL_TEXTURE_2D, boneEmpty);
+		}
+
+		/********Position and Sizing ***********/
+		if (screenWidth > 1600) {
+			glTranslatef(((screenWidth / 2) - 285) + windowRepositionX, ((screenHeight / 2) - 10) + windowRepositionY, 0.0);
+		}
+		else {
+			glTranslatef(((screenWidth / 2) - 260) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
+		}
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
+		glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
+		glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
+		glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
+		glEnd();
+
+		glDisable(GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
+
+		glPopMatrix();
+		/**********************************************************************/
+									//thirdBone
+		/**********************************************************************/
+
+		glPushMatrix();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_TEXTURE_2D);
+
+		if (boost == 3) {
+			glBindTexture(GL_TEXTURE_2D, bone);
+		}
+		else if (boost < 3) {
+			glBindTexture(GL_TEXTURE_2D, boneEmpty);
+		}
+
+		/********Position and Sizing ***********/
+		if (screenWidth > 1600) {
+			glTranslatef(((screenWidth / 2) - 365) + windowRepositionX, ((screenHeight / 2) - 10) + windowRepositionY, 0.0);
+		}
+		else {
+			glTranslatef(((screenWidth / 2) - 335) + windowRepositionX, (screenHeight / 2 - 50) + windowRepositionY, 0.0);
+		}
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0, 0.0); glVertex2f(width, height);
+		glTexCoord2f(0.0, 1.0); glVertex2f(width, tileHeight*height);
+		glTexCoord2f(1.0, 1.0); glVertex2f(tileWidth*width, tileHeight*height);
+		glTexCoord2f(1.0, 0.0); glVertex2f(tileWidth*width, height);
+		glEnd();
+
+		glDisable(GL_BLEND);
+		glDisable(GL_TEXTURE_2D);
+
+		glPopMatrix();
+
+		if (boost == 3) {
+			glPushMatrix();
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, boostBar);
+
+			/********Position and Sizing ***********/
+			if (screenWidth > 1600) {
+				glTranslatef( windowRepositionX-400, ((-screenHeight / 3)+35) + windowRepositionY, 0.0);
+			}
+			else {
+				glTranslatef( windowRepositionX-400, (-screenHeight / 3 ) + windowRepositionY, 0.0);
+			}
+			glBegin(GL_QUADS);
+				glTexCoord2f(0.0, 0.0); glVertex2f(0, 0);
+				glTexCoord2f(0.0, 1.0); glVertex2f(0, 80);
+				glTexCoord2f(1.0, 1.0); glVertex2f(800, 80);
+				glTexCoord2f(1.0, 0.0); glVertex2f(800, 0);
+			glEnd();
+
+			glDisable(GL_BLEND);
+			glDisable(GL_TEXTURE_2D);
+
+			glPopMatrix();
+		}
 	}
 }
 
+void HUD::setTwoPlayer() {
+	twoPlayer = true;
+}
 void HUD::update(int healthIn, int boostIn, float windowRepositionXIn, float windowRepositionYIn, int screenWidthIn, int screenHeightIn) {
 	health = healthIn;
 	boost = boostIn;

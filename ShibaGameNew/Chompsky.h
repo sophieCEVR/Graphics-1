@@ -14,7 +14,7 @@ public:
 	bool chompskyActive = false;
 	bool chompskyInPlace = false;
 	float chompskySitCounter = 0.00;
-	float characterMovementSpeed = 1.2f;
+	float characterMovementSpeed = 1.8f;
 	//float values for vertex creation based on characters current direction 
 
 

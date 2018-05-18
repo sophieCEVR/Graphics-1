@@ -176,6 +176,7 @@ void update()
 			else if (boostActivated && timer >= 3) {
 				boostActivated = false;
 				player1->spacePressed = false;
+				chompsky->spacePressed = false;
 				timer = 0;
 			}
 			owner->update(keys);
@@ -201,8 +202,8 @@ void update()
 				gluOrtho2D(-screenWidth / 4 + hanzoX, screenWidth / 4 + hanzoX, hanzoY - 300, screenHeight / 2 + (hanzoY - 300));           // set the coordinate system for the window
 			}
 			else if (XviewZoomout > 2.3) {
-				XviewZoomout -= 0.003;
-				YviewZoomout -= 0.0015;
+				XviewZoomout -= 0.03;
+				YviewZoomout -= 0.015;
 			}
 			//std::cout << YviewZoomout << std::endl;
 			//	std::cout << XviewZoomout << std::endl;
@@ -220,6 +221,11 @@ void update()
 			player1->collideUp = false;
 			player1->collideDown = false;
 			player1->collideLeft = false;
+
+			chompsky->collideRight = false;
+			chompsky->collideUp = false;
+			chompsky->collideDown = false;
+			chompsky->collideLeft = false;
 
 			if (twoPlayerGame) {
 				player2->collideRight = false;
@@ -292,35 +298,47 @@ void collisionChecking() {
 		for (CornerPath* cp : cpList) {
 			if (cp->pathOBB.SAT2D((player1->charOBB))) {
 				//hanzo->collide = true;
-				glColor3f(1.0, 0.0, 0.0);
-				cp->pathOBB.drawOBB();
+				//glColor3f(1.0, 0.0, 0.0);
+				//cp->pathOBB.drawOBB();
 				if (cp->charPassed == '[') {//left
 					player1->collideLeft = true;
+					chompsky->collideLeft = true;
 				}
 				else if (cp->charPassed == ']') {//right
 					player1->collideRight = true;
+					chompsky->collideRight = true;
 				}
 				else if (cp->charPassed == '-') {//top path
 					player1->collideUp = true;
+					chompsky->collideUp = true;
 				}
 				else if (cp->charPassed == '~') { //bottom path
 					player1->collideDown = true;
+					chompsky->collideDown = true;
 				}
 				else if (cp->charPassed == '`') { //top left corner path
 					player1->collideUp = true;
 					player1->collideLeft = true;
+					chompsky->collideUp = true;
+					chompsky->collideLeft = true;
 				}
 				else if (cp->charPassed == '"') { //top right corner path
 					player1->collideUp = true;
 					player1->collideRight = true;
+					chompsky->collideUp = true;
+					chompsky->collideRight = true;
 				}
 				else if (cp->charPassed == ',') { //bottom left corner
 					player1->collideDown = true;
 					player1->collideLeft = true;
+					chompsky->collideDown = true;
+					chompsky->collideLeft = true;
 				}
 				else if (cp->charPassed == '.') { //bottom right corner
 					player1->collideDown = true;
 					player1->collideRight = true;
+					chompsky->collideDown = true;
+					chompsky->collideRight = true;
 				}
 				if (player1->spacePressed) {
 
@@ -339,26 +357,40 @@ void collisionChecking() {
 					prevTime = currentTime;											// use the current time as the previous time in the next step
 					if (timer < 3) {
 						player1->collisionBoost = true;
+						chompsky->collisionBoost = true;
 						player1->stunned = true;
+						chompsky->stunned = true;
 						player1->forward = false;
+						chompsky->forward = false;
 						player1->backward = false;
+						chompsky->backward = false;
 						player1->left = false;
+						chompsky->left = false;
 						player1->right = false;
+						chompsky->right = false;
 
 					}
 					else if (timer >= 3) {
 						player1->collisionBoost = false;
+						chompsky->collisionBoost = false;
 						player1->stunned = false;
+						chompsky->stunned = false;
 
 						player1->forward = lastForward;
 						player1->backward = lastBackward;
 						player1->left = lastLeft;
 						player1->right = lastRight;
 
+						chompsky->forward = lastForward;
+						chompsky->backward = lastBackward;
+						chompsky->left = lastLeft;
+						player1->right = lastRight;
+
 						lastForward = false;
 						lastBackward = false;
 						lastLeft = false;
 						lastRight = false;
+
 						if (!healthRemoved) {
 							health = health - 2;
 							healthRemoved = true;
@@ -554,13 +586,13 @@ void miniGameDisplay() {
 		glColor3f(1.0, 1.0, 0.0);
 		glEnable(GL_TEXTURE_2D);
 
-		if (!miniGameWin && !miniGameLoss) {
+		if (!miniGameWin && !miniGameLoss && miniGameBool) {
 			glBindTexture(GL_TEXTURE_2D, miniGameTexture);
 		}
-		else if (miniGameLoss && !miniGameWin) {
+		else if (miniGameLoss && !miniGameWin && miniGameBool) {
 			glBindTexture(GL_TEXTURE_2D, miniGameTextureLoss);
 		}
-		else if (!miniGameLoss && miniGameWin) {
+		else if (!miniGameLoss && miniGameWin && miniGameBool) {
 			glBindTexture(GL_TEXTURE_2D, miniGameTextureWin);
 		}
 		glBegin(GL_QUADS);
@@ -579,7 +611,10 @@ void miniGameUpdate() {
 	if (catClicked) {
 		miniGameLoss = true;
 		if ((mouse_x > 860 && mouse_x < 1560) && (mouse_y > 110 && mouse_y < 265) && LeftPressed) {
+			chompsky->Xchar = 0;
+			chompsky->Ychar = 0;
 			chompsky->chompskyActive = false;
+			chompsky->chompskyInPlace = false;
 			miniGameBool = false;
 
 			catClicked = false;
@@ -605,7 +640,11 @@ void miniGameUpdate() {
 	else if (pancakesClicked && cakeClicked && doughnutsClicked) {
 		miniGameWin = true;
 		if ((mouse_x > 110 && mouse_x < 820) && (mouse_y > 25 && mouse_y < 150) && LeftPressed) {
+			chompsky->Xchar = 0;
+			chompsky->Ychar = 0;
 			chompsky->chompskyActive = false;
+			chompsky->chompskyInPlace = false;
+			
 
 			catClicked = false;
 			pancakesClicked = false;
@@ -731,12 +770,12 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 				if (miniGameBool) {
 					reshape(screenWidth, screenHeight);
 				}
-				display();					// Draw The Scene
-
 				if (miniGameBool) {
 					miniGameUpdate();					// update variables
 				}
-				else {
+				display();					// Draw The Scene
+
+				if(!miniGameBool) {
 					update();					// update variables
 				}
 			}

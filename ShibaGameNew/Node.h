@@ -14,6 +14,7 @@ public:
 	void display();
 	void setStartNode();
 	void setFinishNode();
+	void calculateNeighbours(Node* node, int neighbourType);
 	//GLuint loadPNG(char* name);
 
 
@@ -32,4 +33,21 @@ public:
 	int yPosition = 0;
 	int xPos = 0;
 	int yPos = 0;
+	int neighbourTopInt = 10;
+	int neighbourBottomInt = 10;
+	int neighbourLeftInt = 10;
+	int neighbourRightInt = 10;
+	int neighbourTopLeftInt = 14;
+	int neighbourTopRightInt = 14;
+	int neighbourBottomLeftInt = 14;
+	int neighbourBottomRightInt = 14;
+	Node* neighbourTop;
+	Node* neighbourBottom;
+	Node* neighbourLeft;
+	Node* neighbourRight;
+	Node* neighbourTopLeft;
+	Node* neighbourTopRight;
+	Node* neighbourBottomLeft;
+	Node* neighbourBottomRight;
+
 };

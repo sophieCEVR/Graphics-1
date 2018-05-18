@@ -38,7 +38,7 @@ public:
 	GLuint miniGameBarnClosed = 0;
 
 	int randomize = 0;
-
+	int charsInFile = 137;
 
 	/***********************************************************************************************/
 	/*											 METHODS										   */

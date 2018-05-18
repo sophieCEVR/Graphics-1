@@ -38,7 +38,7 @@ public:
 	float Yobject;							//starting y position for specified object/point (for distance calculations)
 
 	float stepCounter = 0;					//counts the "steps" to tell the character when to change texture
-	float movementSpeed = 2;				//Preset movement speed of all active sprites
+	float movementSpeed = 6;				//Preset movement speed of all active sprites
 
 	//directional bools for sprite animations
 	bool texturesNormal = true;				//used for inactive characters to stop texture overlapping

@@ -16,6 +16,7 @@ Chompsky::Chompsky()
 	Ylr1 = 15;								//y axis int #1 when facing left/right
 	Ylr2 = 15;								//y axis int #2 when facing left/right
 	textureFolder = "Pug";
+	movementSpeed = 6.2;
 }
 
 Chompsky::~Chompsky()
@@ -126,11 +127,11 @@ void Chompsky::additionalDisplay()
 
 //updates variables based on user interaction
 void Chompsky::additionalUpdate() {
-
+	std::cout << "Chompsky in place ? " << chompskyInPlace << "Chompsky Y val ? " << Ychar << "Hanzo Y val ? " << Yobject << "Chompsky X val ? " << Xchar << "Hanzo X val ? " << Xobject << std::endl;
 	if (distance < 150 && chompskyActive == false) {
 		chompskyActive = true;
 	}
-	if (!chompskyInPlace && (((Ychar >(Yobject - 55) && (Ychar < (Yobject - 65)) && ((Xchar < (Xobject + 2)) && (Xchar >(Xobject - 2))))))) {
+	if (!chompskyInPlace && (((Ychar >(Yobject - 30) && (Ychar < (Yobject - 20)) && ((Xchar < (Xobject -10)) && (Xchar >(Xobject - 25))))))) {
 		chompskyInPlace = true;
 	}
 
@@ -152,35 +153,60 @@ void Chompsky::additionalInit()
 void Chompsky::additionalProcessKeys(bool keys[256]) {
 
 	if ((chompskyActive && !chompskyInPlace)) {
-		if (Xchar < Xobject) {
+		if (Xchar < (Xobject-20)) {
 			Xchar += movementSpeed; 
 		}
-		else if (Xchar > Xobject) {
+		else if (Xchar > (Xobject-10)) {
 			Xchar -= movementSpeed; 
 		}
-		if (Ychar > (Yobject - 50)) {
+		if (Ychar > (Yobject - 30)) {
 			Ychar -= movementSpeed; 
 		}
-		else if (Ychar < (Yobject - 50)) {
+		else if (Ychar < (Yobject - 20)) {
 			Ychar += movementSpeed; 
 		}
 	}
 	else if (chompskyActive && chompskyInPlace) {
-		if (keys[VK_LEFT])
-		{
-			Xchar -= movementSpeed;
-		}
-		if (keys[VK_RIGHT])
-		{
-			Xchar += movementSpeed;
-		}
-		if (keys[VK_UP])
-		{
-			Ychar += movementSpeed;
-		}
-		if (keys[VK_DOWN])
-		{
-			Ychar -= movementSpeed;
+			if (boostMeter == 3) {
+				if (keys[VK_SPACE]) {
+					spacePressed = true;
+				}
+			}
+			if (spacePressed && !collisionBoost) {
+				movementSpeed = 10;
+				characterMovementSpeed = 4.00f;
+			}
+			else if (spacePressed && collisionBoost) {
+				movementSpeed = 0;
+			}
+			else {
+				movementSpeed = 6;
+			}
+			
+			if (keys[leftPress])
+			{
+				if (!collideLeft) {
+				//	Xchar = Xchar - 10;
+					Xchar -= movementSpeed;
+				}
+			}
+			if (keys[rightPress])
+			{
+				if (!collideRight) {
+					Xchar += movementSpeed;
+				}
+			}
+			if (keys[upPress])
+			{
+				if (!collideUp) {
+					Ychar += movementSpeed;
+				}
+			}
+			if (keys[downPress])
+			{
+				if (!collideDown) {
+					Ychar -= movementSpeed;
+				}
+			}
 		}
 	}
-}

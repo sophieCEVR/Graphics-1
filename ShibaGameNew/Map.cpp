@@ -113,33 +113,55 @@ void Map::mapGenerator() {
 	{
 		while (myfile.peek() != EOF)
 		{
+			bool pathFound = false;
+			notPath = 0;
 			getline(myfile, currentLine);
-			for(int i = 1; i<137;i++){
+			for(int i = 1; i<charsInFile;i++){
 
 			//	nodeVector.push_back(new Node(i, lineCount));
-				bool pathFound = false;
+
+				if (currentLine[i] != 'p') {
+					nodeVector.push_back(new Node(i, lineCount, true));
+				}
 				randomize++;
 				srand((time(NULL)*i)*(time(NULL)*randomize));
 				sleep_for(nanoseconds(10));
 				if (currentLine[i] == 'h') {
 					objectList.push_back(new House(i, lineCount, housesVector.at(rand() % housesVector.size())));
+					nodeVector.push_back(new Node(i+1, lineCount, true));
+					nodeVector.push_back(new Node(i+2, lineCount, true));
+					nodeVector.push_back(new Node(i+3, lineCount, true));
+					nodeVector.push_back(new Node(i+4, lineCount, true));
+					nodeVector.push_back(new Node(i+5, lineCount, true));
+					nodeVector.push_back(new Node(i + 6, lineCount, true));
+					nodeVector.push_back(new Node(i + 7, lineCount, true));
+					nodeVector.push_back(new Node(i + 8, lineCount, true));
 					i+=7;
 				}
 				else if (currentLine[i] == 'm') {//miniGameBarn
 					objectList.push_back(new MiniGameBarn(i, lineCount, miniGameBarnClosed));
+					nodeVector.push_back(new Node(i + 1, lineCount, true));
+					nodeVector.push_back(new Node(i + 2, lineCount, true));
+					nodeVector.push_back(new Node(i + 3, lineCount, true));
+					nodeVector.push_back(new Node(i + 4, lineCount, true));
+					nodeVector.push_back(new Node(i + 5, lineCount, true));
+					nodeVector.push_back(new Node(i + 6, lineCount, true));
+					nodeVector.push_back(new Node(i + 7, lineCount, true));
+					nodeVector.push_back(new Node(i + 8, lineCount, true));
 					i += 7;
 				}
 				else if (currentLine[i] == 'b') {
 					objectList.push_back(new Bush(i, lineCount, bushVector.at(rand() % bushVector.size())));
 				}
 				else if (currentLine[i] == 'p') {
+					pathFound = true;
 					nodeVector.push_back(new Node(i, lineCount, false));
 					if (lineCount == 1 && !alreadySet) {
 						nodeVector.at(i-1)->isStartNode = true;
 						alreadySet = true;
 					}
 					objectList.push_back(new Path(i, lineCount, pathVector.at(rand() % pathVector.size())));
-					chickenX = i;
+					chickenX = i-1;
 				}
 				else if (currentLine[i] == '-') {//top path
 					objectList.push_back(new CornerPath(currentLine[i], i, lineCount, cornerPathVector.at(0)));
@@ -165,11 +187,8 @@ void Map::mapGenerator() {
 				else if (currentLine[i] == '.') {//bottom right corner
 					objectList.push_back(new CornerPath(currentLine[i], i, lineCount, cornerPathVector.at(7)));
 				}
-				if (pathFound = false) {
+				if (pathFound == false) {
 					notPath++;
-				}
-				if (currentLine[i] != 'p') {
-					nodeVector.push_back(new Node(i, lineCount, true));
 				}
 			}
 			lineCount++;
@@ -178,7 +197,8 @@ void Map::mapGenerator() {
 			chickenX++;
 		}
 		chickenPointer = new Chicken((chickenX/2)+notPath, lineCount-1, chicken);
-		nodeVector.at(((chickenX / 2) + notPath)+((lineCount-5)*137)-94)->isFinishNode = true; //what????????????????????????????????????????????????????????????????????????
+		std::cout << "chickenX : " << chickenX << " notPath : " << notPath << " lineCount : " << lineCount << std::endl;
+		nodeVector.at(((chickenX / 2) )+(135*(lineCount-1)))->isFinishNode = true;
 		itemList.push_back(chickenPointer);
 		myfile.close();
 	}
@@ -206,6 +226,17 @@ void Map::mapGenerator() {
 		if (mg) {
 			mg->importOpenTexture(miniGameBarnOpen);
 		}
+	}
+
+	for (Node* n : nodeVector) {
+		//for (int i = 0; i < 1; i++) {
+			if (n->xPosition + 200 < nodeVector.size()) {
+			//	if (i == 0) {
+					n->calculateNeighbours(nodeVector.at((n->xPosition-1 + 135)), 1);
+			//	}
+				cout << "Node number : " << n->xPosition-1 << "node top neighbour " << n->neighbourTop->xPosition-1 << endl;
+			}
+		//}
 	}
 }
 

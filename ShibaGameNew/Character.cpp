@@ -262,7 +262,15 @@ void Character::init(){
 	strcpy(char_arrayr4, texture.c_str());
 	r4 = loadPNG(char_arrayr4);	
 
+	char char_arrayv1[23];
+	texture = textureSource + textureFolder + "/v1.png";
+	strcpy(char_arrayv1, texture.c_str());
+	v1 = loadPNG(char_arrayv1);
 
+	char char_arrayv2[23];
+	texture = textureSource + textureFolder + "/v2.png";
+	strcpy(char_arrayv2, texture.c_str());
+	v2 = loadPNG(char_arrayv2);
 	/**********************************************************************************************/
 	//OBB init
 	/**********************************************************************************************/

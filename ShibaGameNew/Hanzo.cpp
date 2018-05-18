@@ -110,15 +110,6 @@ void Hanzo::additionalInit()
 
 	//stunned
 
-	char char_arrayv1[23];
-	texture = textureSource + textureFolder + "/v1.png";
-	strcpy(char_arrayv1, texture.c_str());
-	v1 = loadPNG(char_arrayv1);
-
-	char char_arrayv2[23];
-	texture = textureSource + textureFolder + "/v2.png";
-	strcpy(char_arrayv2, texture.c_str());
-	v2 = loadPNG(char_arrayv2);
 }
 	////glClearColor(0.0, 0.5, 0.0, 0.0);
 
@@ -172,6 +163,7 @@ void Hanzo::additionalProcessKeys(bool keys[256]) {
 	}
 	if (spacePressed && !collisionBoost) {
 		movementSpeed = 10;
+		characterMovementSpeed = 1.8f;
 	}	
 	else if (spacePressed && collisionBoost) {
 		movementSpeed = 0;

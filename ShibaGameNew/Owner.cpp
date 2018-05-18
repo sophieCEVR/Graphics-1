@@ -17,9 +17,7 @@ Owner::Owner()
 }
 
 
-Owner::~Owner()
-{
-}
+Owner::~Owner(){}
 
 void Owner::additionalDisplay()
 {

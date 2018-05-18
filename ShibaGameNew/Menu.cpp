@@ -47,6 +47,8 @@ void Menu::init(int screenHeight, int screenWidth) {
 	winSingle = loadPNG("textures/menus/winSingle.png");
 	lossHealth = loadPNG("textures/menus/noLife.png");
 	aiWon = loadPNG("textures/menus/aiWon.png");
+	p1Win = loadPNG("textures/menus/player1Win.png");
+	p2Win = loadPNG("textures/menus/player2Win.png");
 	//menu1 = loadPNG("textures/menus/menu.png");
 }
 
@@ -69,7 +71,7 @@ void Menu::display(int screenHeight, int screenWidth) {
 			glBindTexture(GL_TEXTURE_2D, howToPlay);
 		}
 		else if (menuCard == 4) {
-			glBindTexture(GL_TEXTURE_2D, howToPlay);
+			glBindTexture(GL_TEXTURE_2D, menu3);
 		}
 	}
 	else if (outcomeCard == 1) {
@@ -83,6 +85,14 @@ void Menu::display(int screenHeight, int screenWidth) {
 	else if (outcomeCard == 3) {
 		menuCard = 6;
 		glBindTexture(GL_TEXTURE_2D, aiWon);
+	}
+	else if (outcomeCard == 4) {
+		menuCard = 6;
+		glBindTexture(GL_TEXTURE_2D, p1Win);
+	}
+	else if (outcomeCard == 5) {
+		menuCard = 6;
+		glBindTexture(GL_TEXTURE_2D, p2Win);
 	}
 	//else if(outcomeCard == 1) {
 	//	glBindTexture(GL_TEXTURE_2D, winSingle);
@@ -99,7 +109,7 @@ void Menu::display(int screenHeight, int screenWidth) {
 }
 
 void Menu::update(int mouseX, int mouseY, bool leftClick) {
-	std::cout << "mouseX : " << mouseX << "     mouseY : " << mouseY << std::endl;
+	//std::cout << "mouseX : " << mouseX << "     mouseY : " << mouseY << std::endl;
 	if (menuCard == 1) {
 		if ((mouseX > 140 && mouseX < 365) && (mouseY > 195 && mouseY < 280) && leftClick) {
 			menuCard++;
@@ -115,7 +125,7 @@ void Menu::update(int mouseX, int mouseY, bool leftClick) {
 			}
 			else if ((mouseY > 490 && mouseY < 610) && leftClick) {
 				menuCard = 4;
-				//singlePlayerActivated = true;
+				singlePlayerActivated = true;
 			}
 			else if ((mouseY > 280 && mouseY < 405) && leftClick) {
 				singlePlayerActivated = true;
@@ -131,7 +141,7 @@ void Menu::update(int mouseX, int mouseY, bool leftClick) {
 			menuCard = 1;
 		}
 	}
-	else if (menuCard == 4) {
+	/*else if (menuCard == 4) {
 		if ((mouseX > 404 && mouseX < 1485) && (mouseY > 705 && mouseY < 835) && leftClick) {
 			singlePlayerActivated = true;
 		}
@@ -147,7 +157,7 @@ void Menu::update(int mouseX, int mouseY, bool leftClick) {
 			singlePlayerActivated = true;
 			threeAIPlayerActivated = true;
 		}
-	}
+	}*/
 	else if (outcomeCard == 1) {
 		if ((mouseX > 1335 && mouseX < 1585) && (mouseY > 25 && mouseY < 80) && leftClick) {
 			outcomeCard = 0;
@@ -162,6 +172,18 @@ void Menu::update(int mouseX, int mouseY, bool leftClick) {
 	}
 	else if (outcomeCard == 3) {
 		if ((mouseX > 95 && mouseX < 990) && (mouseY > 235 && mouseY < 365) && leftClick) {
+			outcomeCard = 0;
+			menuCard = 1;
+		}
+	}
+	else if (outcomeCard == 4) {
+		if ((mouseX > 1335 && mouseX < 1585) && (mouseY > 25 && mouseY < 80) && leftClick) {
+			outcomeCard = 0;
+			menuCard = 1;
+		}
+	}
+	else if (outcomeCard == 5) {
+		if ((mouseX > 1335 && mouseX < 1585) && (mouseY > 25 && mouseY < 80) && leftClick) {
 			outcomeCard = 0;
 			menuCard = 1;
 		}

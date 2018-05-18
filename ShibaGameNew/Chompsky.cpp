@@ -127,7 +127,7 @@ void Chompsky::additionalDisplay()
 
 //updates variables based on user interaction
 void Chompsky::additionalUpdate() {
-	std::cout << "Chompsky in place ? " << chompskyInPlace << "Chompsky Y val ? " << Ychar << "Hanzo Y val ? " << Yobject << "Chompsky X val ? " << Xchar << "Hanzo X val ? " << Xobject << std::endl;
+	//std::cout << "Chompsky in place ? " << chompskyInPlace << "Chompsky Y val ? " << Ychar << "Hanzo Y val ? " << Yobject << "Chompsky X val ? " << Xchar << "Hanzo X val ? " << Xobject << std::endl;
 	if (distance < 150 && chompskyActive == false) {
 		chompskyActive = true;
 	}

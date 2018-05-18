@@ -17,7 +17,7 @@ FastAI::FastAI()
 	Ylr1 = 38;							//y axis int #1 when facing left/right
 	Ylr2 = 20;							//y axis int #2 when facing left/right
 	textureFolder = "AI3";
-	movementSpeed = 6.5;
+	movementSpeed = 6.25;
 }
 
 

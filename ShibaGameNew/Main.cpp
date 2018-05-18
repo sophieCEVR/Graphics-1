@@ -79,7 +79,6 @@ Character* player2;
 Chompsky* chompsky;
 Character* owner;
 HUD* hud;
-HUD* hud2;
 dumbAI* ai1;
 FastAI* ai2;
 OppositeAi* ai3;
@@ -237,10 +236,9 @@ void update()
 				chompsky->Xobject = hanzoX;
 				chompsky->Yobject = hanzoY;
 				chompsky->update(keys);
-			}
-			hud->update(health, boost, hanzoX, hanzoY, screenWidth, screenHeight);
-			if (twoPlayerGame) {
-				hud2->update(health2, boost2, hanzoX, hanzoY-700, screenWidth, screenHeight);
+			}			
+			if (!twoPlayerGame) {
+				hud->update(health, boost, hanzoX, hanzoY, screenWidth, screenHeight);
 			}
 			glMatrixMode(GL_PROJECTION);						// select the projection matrix stack
 			glLoadIdentity();									// reset the top of the projection matrix to an identity matrix
@@ -319,9 +317,6 @@ void startNewGame() {
 		chompsky = new Chompsky();
 		owner = new Owner();
 		hud = new HUD(health, boost, screenWidth, screenHeight);
-		if (twoPlayerGame) {
-			hud2 = new HUD(health2, boost2, 0, 0);
-		}
 		ai1 = new dumbAI();
 		ai2 = new FastAI();
 		ai3 = new OppositeAi();
@@ -329,12 +324,11 @@ void startNewGame() {
 		map->init();
 		player1->init();
 		player2->init();
+		player2->Xchar = 200;
 		chompsky->init();
 		owner->init();
 		hud->init();		
 		if (twoPlayerGame) {
-			hud2->init();
-			hud2->setTwoPlayer();
 			map->twoPlayerGame = true;
 			hud->setTwoPlayer();
 		}
@@ -348,6 +342,7 @@ void startNewGame() {
 		boost = 0;
 		health2 = 6;
 		boost2 = 0;
+
 }
 void collisionChecking() {
 	if (!miniGameBool) {
@@ -952,25 +947,28 @@ void collisionChecking() {
 
 		//Chicken collision 
 		if (map->chickenPointer->itemOBB.SAT2D((player1->charOBB))) {
-			glColor3f(1.0, 0.0, 0.0);
+		//	glColor3f(1.0, 0.0, 0.0);
 			map->chickenPointer->itemOBB.drawOBB();
 			winCondition(1);
 		}
 		else if (map->chickenPointer->itemOBB.SAT2D((ai1->charOBB))) {
-			glColor3f(1.0, 0.0, 0.0);
+			//glColor3f(1.0, 0.0, 0.0);
 			map->chickenPointer->itemOBB.drawOBB();
 			lossCondition(2);
 		}
 		else if (map->chickenPointer->itemOBB.SAT2D((ai2->charOBB))) {
-			glColor3f(1.0, 0.0, 0.0);
+			//glColor3f(1.0, 0.0, 0.0);
 			map->chickenPointer->itemOBB.drawOBB();
 			lossCondition(2);
 		}
 		else if (twoPlayerGame) {
-			if ((map->chickenPointer->itemOBB.SAT2D((player2->charOBB)))) {
-				glColor3f(0.0, 1.0, 0.0);
+			if ((map->chickenPointer->itemOBB.SAT2D((player1->charOBB)))) {
 				map->chickenPointer->itemOBB.drawOBB();
 				winCondition(2);
+			}
+			else if ((map->chickenPointer->itemOBB.SAT2D((player2->charOBB)))) {
+				map->chickenPointer->itemOBB.drawOBB();
+				winCondition(3);
 			}
 		}
 		 
@@ -989,15 +987,14 @@ void winCondition(int winType) {
 	menu = new Menu();
 	menu->init(screenHeight, screenWidth);
 	if (winType == 1 && !twoPlayerGame) {//player 1 got the chicken 
-		cout << "you got the chicken!" << endl;
 		menu->outcomeCard = 1;
 	}
-	//if (winType == 1 && twoPlayerGame) {//player 1 got the chicken playing 2 player mode
-	//	cout << "Player 1 beat player 2 !" << endl;
-	//}
-	//if (winType == 2) {//player 2 got the chicken playing 2 player mode
-	//	cout << "Player 2 beat player 1 !" << endl;
-	//}
+	if (winType == 2 && twoPlayerGame) {//player 1 got the chicken playing 2 player mode
+		menu->outcomeCard = 4;
+	}
+	if (winType == 3 && twoPlayerGame) {//player 2 got the chicken playing 2 player mode
+		menu->outcomeCard = 5;
+	}
 	menu->display(screenHeight, screenWidth);
 }
 
@@ -1050,7 +1047,7 @@ void miniGameDisplay() {
 }
 
 void miniGameUpdate() {
-	std::cout << "mouseX : " << mouse_x << "     mouseY : " << mouse_y << std::endl;
+	//std::cout << "mouseX : " << mouse_x << "     mouseY : " << mouse_y << std::endl;
 	if (catClicked) {
 		miniGameLoss = true;
 		if ((mouse_x > 860 && mouse_x < 1560) && (mouse_y > 110 && mouse_y < 265) && LeftPressed) {
@@ -1115,19 +1112,19 @@ void miniGameUpdate() {
 	}
 	else {
 		if ((mouse_x > 585 && mouse_x < 945) && (mouse_y > 355 && mouse_y < 710) && LeftPressed) {
-			std::cout << "pancakesClicked" << std::endl;
+		//	std::cout << "pancakesClicked" << std::endl;
 			pancakesClicked = true;
 		}
 		else if ((mouse_x > 520 && mouse_x < 950) && (mouse_y > 90 && mouse_y < 330) && LeftPressed) {
-			std::cout << "cakeClicked" << std::endl;
+		//	std::cout << "cakeClicked" << std::endl;
 			cakeClicked = true;
 		}
 		else if ((mouse_x > 990 && mouse_x < 1490) && (mouse_y > 135 && mouse_y < 345) && LeftPressed) {
-			std::cout << "doughnutsClicked" << std::endl;
+		//	std::cout << "doughnutsClicked" << std::endl;
 			doughnutsClicked = true;
 		}
 		else if ((mouse_x > 990 && mouse_x < 1450) && (mouse_y > 355 && mouse_y < 710) && LeftPressed) {
-			std::cout << "catClicked" << std::endl;
+		//	std::cout << "catClicked" << std::endl;
 			catClicked = true;
 		}
 	}
@@ -1228,15 +1225,15 @@ int WINAPI WinMain(	HINSTANCE	hInstance,			// Instance
 				menu->update(mouse_x, mouse_y, LeftPressed);
 				gameActive = menu->singlePlayerActivated;
 				twoPlayerGame = menu->twoPlayerActivated;
-				singlePlayer1 = menu->oneAIActivated;
-				singlePlayer2 = menu->twoAIPlayerActivated;
-				singlePlayer3 = menu->threeAIPlayerActivated;
+				//singlePlayer1 = menu->oneAIActivated;
+				//singlePlayer2 = menu->twoAIPlayerActivated;
+				//singlePlayer3 = menu->threeAIPlayerActivated;
 				if (gameActive) {
 					menu->singlePlayerActivated = false;
 					menu->twoPlayerActivated = false;
-					menu->oneAIActivated = false;
-					menu->twoAIPlayerActivated = false;
-					menu->threeAIPlayerActivated = false;
+					//menu->oneAIActivated = false;
+					//menu->twoAIPlayerActivated = false;
+					//menu->threeAIPlayerActivated = false;
 					PlaySound("audio/Metal_Race.wav", NULL, SND_ASYNC);
 					miniGameLoss = false;
 					miniGameWin = false;

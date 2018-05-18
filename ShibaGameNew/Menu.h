@@ -18,6 +18,8 @@ public:
 	GLuint winSingle = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint lossHealth = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint aiWon = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
+	GLuint p1Win = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
+	GLuint p2Win = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 
 	bool singlePlayerActivated = false;
 	bool oneAIActivated = false;

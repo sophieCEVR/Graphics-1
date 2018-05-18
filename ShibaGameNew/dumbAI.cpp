@@ -28,58 +28,6 @@ dumbAI::~dumbAI(){}
 
 void dumbAI::additionalDisplay()
 {
-	/**********************************************************************************************/
-	//Lead Creation (backwards view) - ordering requires here
-	/**********************************************************************************************/
-	if (lead && backward) {
-		glLineWidth(3.0);
-		if (distance < 175) {
-			glColor3f(1.0, 0.0, 0.0);
-		}
-		else {
-			lead = false;
-		}
-		glBegin(GL_LINES);
-		glVertex2f(Xchar, Ychar);
-		glVertex2f(Xobject, Yobject);
-		glEnd();
-		glPopMatrix();
-	}
-
-	/**********************************************************************************************/
-	//Lead Creation (all other views)
-	/**********************************************************************************************/
-
-	/************************************* Lead Creation ******************************************/
-
-	if (lead && !backward) {
-		glPushMatrix();
-		glLineWidth(3.0);
-		if (distance < 175) {
-			glColor3f(1.0, 0.0, 0.0);
-		}
-		else {
-			lead = false;
-		}
-		glBegin(GL_LINES);
-		glVertex2f(Xchar, Ychar);
-		glVertex2f(Xobject, Yobject);
-		glEnd();
-		glPopMatrix();
-	}
-
-	/**************************************** Lead Tie ********************************************/
-
-	glPushMatrix();
-	glTranslatef(Xobject, Yobject, 0.0);
-	glColor3f(1.0, 1.0, 0.0);
-	glPointSize(20.0);
-	glBegin(GL_POINTS);
-	glVertex2f(0, 0);
-	glEnd();
-	glPointSize(1.0);
-
-	glPopMatrix();
 
 	/**********************************************************************************************/
 	//OBB for all directions

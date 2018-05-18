@@ -219,7 +219,9 @@ void Map::mapGenerator() {
 				}
 			}
 			else if (chance == 10) {
-				itemList.push_back(new Heart(p->xPosition, p->yPosition, heart));
+				if (!twoPlayerGame) {
+					itemList.push_back(new Heart(p->xPosition, p->yPosition, heart));
+				}
 			}
 		}
 	}

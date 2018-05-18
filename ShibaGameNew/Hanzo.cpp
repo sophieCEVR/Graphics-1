@@ -25,7 +25,7 @@ void Hanzo::additionalDisplay()
 	if (lead && backward) {
 		glLineWidth(3.0);
 		if (distance < 175) {
-			glColor3f(1.0, 0.0, 0.0);
+			//glColor3f(1.0, 0.0, 0.0);
 		}
 		else {
 			lead = false;
@@ -61,16 +61,16 @@ void Hanzo::additionalDisplay()
 
 	/**************************************** Lead Tie ********************************************/
 
-	glPushMatrix();
-	glTranslatef(Xobject, Yobject, 0.0);
-	glColor3f(1.0, 1.0, 0.0);
-	glPointSize(20.0);
-	glBegin(GL_POINTS);
-		glVertex2f(0, 0);
-	glEnd();
-	glPointSize(1.0);
+	//glPushMatrix();
+	//glTranslatef(Xobject, Yobject, 0.0);
+	//glColor3f(1.0, 1.0, 0.0);
+	//glPointSize(20.0);
+	//glBegin(GL_POINTS);
+	//	glVertex2f(0, 0);
+	//glEnd();
+	//glPointSize(1.0);
 
-	glPopMatrix();
+	//glPopMatrix();
 
 	/**********************************************************************************************/
 									//OBB for all directions

@@ -17,6 +17,8 @@
     <ClCompile Include="Chicken.cpp" />
     <ClCompile Include="Chompsky.cpp" />
     <ClCompile Include="CornerPath.cpp" />
+    <ClCompile Include="dumbAI.cpp" />
+    <ClCompile Include="FastAI.cpp" />
     <ClCompile Include="Hanzo.cpp" />
     <ClCompile Include="Heart.cpp" />
     <ClCompile Include="House.cpp" />
@@ -29,6 +31,7 @@
     <ClCompile Include="MiniGameBarn.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="OBB.cpp" />
+    <ClCompile Include="OppositeAi.cpp" />
     <ClCompile Include="Owner.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="Player2Hanzo.cpp" />
@@ -40,6 +43,8 @@
     <ClInclude Include="Chicken.h" />
     <ClInclude Include="Chompsky.h" />
     <ClInclude Include="CornerPath.h" />
+    <ClInclude Include="dumbAI.h" />
+    <ClInclude Include="FastAI.h" />
     <ClInclude Include="Hanzo.h" />
     <ClInclude Include="Heart.h" />
     <ClInclude Include="House.h" />
@@ -52,6 +57,7 @@
     <ClInclude Include="MiniGameBarn.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="OBB.h" />
+    <ClInclude Include="OppositeAi.h" />
     <ClInclude Include="Owner.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="Player2Hanzo.h" />

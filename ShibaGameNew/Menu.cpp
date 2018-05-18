@@ -45,6 +45,7 @@ void Menu::init(int screenHeight, int screenWidth) {
 	howToPlay = loadPNG("textures/menus/howToPlay.png");
 	winSingle = loadPNG("textures/menus/winSingle.png");
 	lossHealth = loadPNG("textures/menus/noLife.png");
+	aiWon = loadPNG("textures/menus/aiWon.png");
 	//menu1 = loadPNG("textures/menus/menu.png");
 }
 
@@ -75,6 +76,10 @@ void Menu::display(int screenHeight, int screenWidth) {
 		menuCard = 4;
 		glBindTexture(GL_TEXTURE_2D, lossHealth);
 	}
+	else if (outcomeCard == 3) {
+		menuCard = 4;
+		glBindTexture(GL_TEXTURE_2D, aiWon);
+	}
 	//else if(outcomeCard == 1) {
 	//	glBindTexture(GL_TEXTURE_2D, winSingle);
 	//}
@@ -90,7 +95,7 @@ void Menu::display(int screenHeight, int screenWidth) {
 }
 
 void Menu::update(int mouseX, int mouseY, bool leftClick) {
-	//std::cout << "mouseX : " << mouseX << "     mouseY : " << mouseY << std::endl;
+	std::cout << "mouseX : " << mouseX << "     mouseY : " << mouseY << std::endl;
 	if (menuCard == 1) {
 		if ((mouseX > 140 && mouseX < 365) && (mouseY > 195 && mouseY < 280) && leftClick) {
 			menuCard++;
@@ -129,6 +134,12 @@ void Menu::update(int mouseX, int mouseY, bool leftClick) {
 	}
 	else if (outcomeCard == 2) {
 		if ((mouseX > 1315 && mouseX < 1565) && (mouseY > 30 && mouseY < 85) && leftClick) {
+			outcomeCard = 0;
+			menuCard = 1;
+		}
+	}
+	else if (outcomeCard == 3) {
+		if ((mouseX > 95 && mouseX < 990) && (mouseY > 235 && mouseY < 365) && leftClick) {
 			outcomeCard = 0;
 			menuCard = 1;
 		}

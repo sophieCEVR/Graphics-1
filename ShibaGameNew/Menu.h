@@ -16,6 +16,7 @@ public:
 	GLuint howToPlay = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint winSingle = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	GLuint lossHealth = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
+	GLuint aiWon = 0;							//GLuint identifying texture 2 of 4 to be used when facing forward.
 	
 	bool singlePlayerActivated = false;
 	bool twoPlayerActivated = false;

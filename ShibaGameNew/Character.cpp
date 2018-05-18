@@ -167,8 +167,7 @@ void Character::update(bool keys[256]) {
 	distance = sqrt(((Xchar - Xobject)*(Xchar - Xobject)) + ((Ychar - Yobject)*(Ychar - Yobject)));
 	additionalUpdate();
 }
-void Character::additionalUpdate()
-{}
+void Character::additionalUpdate(){}
 
 void Character::init(){
 	

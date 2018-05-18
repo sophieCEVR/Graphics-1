@@ -227,17 +227,18 @@ void Map::mapGenerator() {
 			mg->importOpenTexture(miniGameBarnOpen);
 		}
 	}
-
-	for (Node* n : nodeVector) {
-		//for (int i = 0; i < 1; i++) {
-			if (n->xPosition + 200 < nodeVector.size()) {
-			//	if (i == 0) {
-					n->calculateNeighbours(nodeVector.at((n->xPosition-1 + 135)), 1);
-			//	}
-				cout << "Node number : " << n->xPosition-1 << "node top neighbour " << n->neighbourTop->xPosition-1 << endl;
-			}
-		//}
-	}
+	int hi = 1;
+	//for (Node* n : nodeVector) {
+	//	//for (int i = 0; i < 1; i++) {
+	//	hi++;
+	//		if (n->xPosition + 200 < nodeVector.size()) {
+	//		//	if (i == 0) {
+	//				n->calculateNeighbours(nodeVector.at((n->xPosition-1 + 135)), 1);
+	//		//	}
+	//				cout << "Node number : " << hi << endl;//" node top neighbour " << n->neighbourTop->xPosition-1 << endl;
+	//		}
+	//	//}
+	//}
 }
 
 void Map::init()
@@ -275,7 +276,84 @@ void Map::init()
 	heart = loadPNG("textures/Items/heart.png");
 
 	mapGenerator();
-
+	objectList.push_back(new House(-11, 81, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(12, 81, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(12, 72, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(2, 75, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new Bush(1, 75, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(1, 74, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(10, 75, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(11, 75, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(11, 74, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new CornerPath('`', 2, 74, cornerPathVector.at(4)));
+	objectList.push_back(new CornerPath('-', 3, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 4, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 5, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 6, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 7, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 8, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('-', 9, 74, cornerPathVector.at(0)));
+	objectList.push_back(new CornerPath('"', 10, 74, cornerPathVector.at(5)));
+	objectList.push_back(new Bush(1, 73, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new CornerPath('[', 2, 73, cornerPathVector.at(2)));
+	objectList.push_back(new Path(3, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(4, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(5, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(6, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(7, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(8, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(9, 73, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new CornerPath(']', 10, 73, cornerPathVector.at(3)));
+	objectList.push_back(new Bush(11, 73, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(1, 72, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new CornerPath('[', 2, 72, cornerPathVector.at(2)));
+	objectList.push_back(new Path(3, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(4, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(5, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(6, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(7, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(8, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new Path(9, 72, pathVector.at(rand() % pathVector.size())));
+	objectList.push_back(new CornerPath(']', 10, 72, cornerPathVector.at(3)));
+	objectList.push_back(new Bush(11, 72, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new House(-21, 72, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-7, 72, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-11, 63, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-21, 54, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-7, 54, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-11, 45, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-21, 36, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-7, 36, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-11, 27, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-21, 18, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-7, 18, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(-11, 9, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new Bush(1, 0, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new CornerPath(',', 2, 0, cornerPathVector.at(6)));
+	objectList.push_back(new CornerPath('~', 3, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 4, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 5, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 6, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 7, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 8, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('~', 9, 0, cornerPathVector.at(1)));
+	objectList.push_back(new CornerPath('.', 10, 0, cornerPathVector.at(7)));
+	objectList.push_back(new House(-7, 0, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new Bush(11, 0, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(1, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(2, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(3, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(4, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(5, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(6, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(7, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(8, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(9, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new Bush(10, -1, bushVector.at(rand() % bushVector.size())));
+	objectList.push_back(new House(-9, -8, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(2, -8, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(12, -8, housesVector.at(rand() % housesVector.size())));
+	objectList.push_back(new House(21, -8, housesVector.at(rand() % housesVector.size())));
 	for (MapObject*m : objectList) {
 		m->init();
 	}

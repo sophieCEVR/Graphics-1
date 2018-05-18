@@ -97,12 +97,12 @@ public:
 
 	void display();					//basic movement instructions for all characters in their default states
 	virtual void additionalDisplay();
-	void update(bool keys[256]);							//updates
+	virtual void update(bool keys[256]);							//updates
 	virtual void additionalUpdate();
 	virtual void additionalInit();
 											//virtual int characterState();			//identifies which state the character is in via an int and returns this to the state machine in the main class. Preset to 0 on main character class
 											//virtual void characterMove();			//has instructions on how the character should move in specified states
-	void processKeys(bool keys[256], int boostMeterIn);		//allows for processing of key presses
+	virtual void processKeys(bool keys[256], int boostMeterIn);		//allows for processing of key presses
 	virtual void additionalProcessKeys(bool keys[256]);
 	GLuint loadPNG(char* name);			//allows for texture loading 
 	virtual void init();							//

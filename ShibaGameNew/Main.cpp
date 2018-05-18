@@ -7,6 +7,9 @@
 #include "Player2Hanzo.h"
 #include "Chompsky.h"
 #include "Character.h"
+#include "dumbAI.h"
+#include "FastAI.h"
+#include "OppositeAI.h"
 #include "Owner.h"
 #include "Map.h"
 #include "HUD.h"
@@ -48,6 +51,12 @@ bool lastBackward = false;
 bool lastLeft = false;
 bool lastRight = false;
 bool healthRemoved = false;
+bool healthRemovedAI1 = false;
+bool healthRemovedAI2 = false;
+bool healthRemovedAI3 = false;
+bool charBouncedAI1 = false;
+bool charBouncedAI2 = false;
+bool charBouncedAI3 = false;
 bool miniGameBool = false;
 bool pancakesClicked = false;
 bool cakeClicked = false;
@@ -63,6 +72,9 @@ Character* player2;
 Chompsky* chompsky;
 Character* owner;
 HUD* hud;
+dumbAI* ai1;
+FastAI* ai2;
+OppositeAi* ai3;
 
 
 
@@ -124,6 +136,9 @@ void display(){
 		else {
 			chompsky->display();
 			owner->display();
+			ai1->display();
+			ai2->display();
+			ai3->display();
 		}
 	}
 	else {
@@ -181,6 +196,9 @@ void update()
 			}
 			owner->update(keys);
 			player1->update(keys);
+			ai1->update(keys);
+			ai2->update(keys);
+			ai3->update(keys);
 			if (twoPlayerGame) {
 				player2->update(keys);
 			}
@@ -272,6 +290,9 @@ void startNewGame() {
 		chompsky = new Chompsky();
 		owner = new Owner();
 		hud = new HUD(health, boost, screenWidth, screenHeight);
+		ai1 = new dumbAI();
+		ai2 = new FastAI();
+		ai3 = new OppositeAi();
 		delete menu;
 		map->init();
 		player1->init();
@@ -279,6 +300,12 @@ void startNewGame() {
 		chompsky->init();
 		owner->init();
 		hud->init();
+		ai1->init();
+		ai1->chickenLocation(map->chickenPointer->xItem, map->chickenPointer->yItem);
+		ai2->init();
+		ai2->chickenLocation(map->chickenPointer->xItem, map->chickenPointer->yItem);
+		ai3->init();
+		ai3->chickenLocation(map->chickenPointer->xItem, map->chickenPointer->yItem);
 		health = 6;
 		boost = 0;
 }
@@ -402,7 +429,319 @@ void collisionChecking() {
 					timer = 0;
 				}
 			}
+			if (player1->charOBB.SAT2D(ai1->charOBB)) {
+				glColor3f(1.0, 0.0, 0.0);
+				player1->charOBB.drawOBB();
+				ai1->charOBB.drawOBB();
+				if (!charBouncedAI1) {
+					player1->Xchar += 2;
+					player1->Ychar -= 2;
+					charBouncedAI1 = true;
+				}
+				if (!healthRemovedAI1) {
+					health = health - 1;
+					healthRemovedAI1 = true;
+				}
+			}
+			else {
+				healthRemovedAI1 = false;
+				charBouncedAI1 = false;
+			}
+			if (player1->charOBB.SAT2D(ai2->charOBB)) {
+				glColor3f(1.0, 0.0, 0.0);
+				player1->charOBB.drawOBB();
+				ai2->charOBB.drawOBB();
+				if (!charBouncedAI2) {
+					player1->Xchar += 2;
+					player1->Ychar -= 2; 
+					charBouncedAI2 = true;
+				}
+				if (!healthRemovedAI2) {
+					health = health - 1;
+					healthRemovedAI2 = true;
+				}
+			}
+			else {
+				healthRemovedAI2 = false;
+				charBouncedAI2 = false;
+			}
+			if (player1->charOBB.SAT2D(ai3->charOBB)) {
+				glColor3f(1.0, 0.0, 0.0);
+				player1->charOBB.drawOBB();
+				ai3->charOBB.drawOBB();
+				if (!charBouncedAI3) {
+					player1->Xchar += 2;
+					player1->Ychar -= 2;
+					charBouncedAI3 = true;
+				}
+				if (!healthRemovedAI3) {
+					health = health - 1;
+					healthRemovedAI3 = true;
+				}
+			}
+			else {
+				healthRemovedAI3 = false;
+				charBouncedAI3 = false;
+			}
+			/*******************************************************/
+						//AI 1 collisions
+			/*******************************************************/
+			if (cp->pathOBB.SAT2D((ai1->charOBB))) {
+				glColor3f(1.0, 0.0, 0.0);
+				cp->pathOBB.drawOBB();
+				if (cp->charPassed == '[') {//left
+					ai1->Xchar += 2;
+					ai1->collideLeft = true;
+					ai1->collideRight = false;
+					ai1->collideUp = false;
+					ai1->collideDown = false;
+				}
+				else if (cp->charPassed == ']') {//right
+					ai1->Xchar -= 2;
+					ai1->collideRight = true;
+					ai1->collideLeft = false;
+					ai1->collideUp = false;
+					ai1->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && !(cp->charPassed == '`')) {//top path
+					ai1->Ychar -= 2;
+					ai1->collideUp = true;
+					//ai1->collideLeft = false;
+					ai1->collideRight = false;
+					ai1->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && !(cp->charPassed == '`')) {
+					ai1->Ychar -= 2;
+					ai1->collideUp = true;
+					ai1->collideLeft = true;
+					ai1->collideRight = false;
+					ai1->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai1->Ychar -= 2;
+					ai1->collideUp = true;
+					ai1->collideLeft = true;
+					ai1->collideRight = false;
+					ai1->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai1->Ychar -= 2;
+					ai1->collideUp = true;
+					ai1->collideLeft = true;
+					ai1->collideRight = false;
+					ai1->collideDown = false;
+				}
+				else if (cp->charPassed == '~') { //bottom path
+					ai1->collideDown = true;
+					ai1->collideLeft = false;
+					ai1->collideRight = false;
+					ai1->collideUp = false;
+				}
+				else if (cp->charPassed == '`') { //top left corner path
+					ai1->collideUp = true;
+					ai1->collideLeft = true;
+					//ai1->collideRight = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == '"') { //top right corner path
+					ai1->collideUp = true;
+					ai1->collideRight = true;
+					//ai1->collideLeft = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == ',') { //bottom left corner
+					ai1->collideDown = true;
+					ai1->collideLeft = true;
+					//ai1->collideUp = false;
+					//ai1->collideRight = false;
+				}
+				else if (cp->charPassed == '.') { //bottom right corner
+					ai1->collideDown = true;
+					ai1->collideRight = true;
+					//ai1->collideUp = false;
+					//ai1->collideLeft = false;
+				}
+			}
+			//else {
+			//	ai1->collideUp = true;
+			//	ai1->collideLeft = true;
+			//	ai1->collideDown = true;
+			//	ai1->collideRight = true;
+			//}
+			/*******************************************************/
+							//AI 2 collisions
+			/*******************************************************/
+			if (cp->pathOBB.SAT2D((ai2->charOBB))) {
+				glColor3f(1.0, 0.0, 0.0);
+				cp->pathOBB.drawOBB();
+				if (cp->charPassed == '[') {//left
+					ai2->Xchar += 2;
+					ai2->collideLeft = true;
+					ai2->collideRight = false;
+					ai2->collideUp = false;
+					ai2->collideDown = false;
+				}
+				else if (cp->charPassed == ']') {//right
+					ai2->Xchar -= 2;
+					ai2->collideRight = true;
+					ai2->collideLeft = false;
+					ai2->collideUp = false;
+					ai2->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && !(cp->charPassed == '`')) {//top path
+					ai2->Ychar -= 2;
+					ai2->collideUp = true;
+					//ai1->collideLeft = false;
+					ai2->collideRight = false;
+					ai2->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && !(cp->charPassed == '`')) {
+					ai2->Ychar -= 2;
+					ai2->collideUp = true;
+					ai2->collideLeft = true;
+					ai2->collideRight = false;
+					ai2->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai2->Ychar -= 2;
+					ai2->collideUp = true;
+					ai2->collideLeft = true;
+					ai2->collideRight = false;
+					ai2->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai2->Ychar -= 2;
+					ai2->collideUp = true;
+					ai2->collideLeft = true;
+					ai2->collideRight = false;
+					ai2->collideDown = false;
+				}
+				else if (cp->charPassed == '~') { //bottom path
+					ai2->collideDown = true;
+					ai2->collideLeft = false;
+					ai2->collideRight = false;
+					ai2->collideUp = false;
+				}
+				else if (cp->charPassed == '`') { //top left corner path
+					ai2->collideUp = true;
+					ai2->collideLeft = true;
+					//ai1->collideRight = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == '"') { //top right corner path
+					ai2->collideUp = true;
+					ai2->collideRight = true;
+					//ai1->collideLeft = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == ',') { //bottom left corner
+					ai2->collideDown = true;
+					ai2->collideLeft = true;
+					//ai1->collideUp = false;
+					//ai1->collideRight = false;
+				}
+				else if (cp->charPassed == '.') { //bottom right corner
+					ai2->collideDown = true;
+					ai2->collideRight = true;
+					//ai1->collideUp = false;
+					//ai1->collideLeft = false;
+				}
+			}
+			//else {
+			//	ai1->collideUp = true;
+			//	ai1->collideLeft = true;
+			//	ai1->collideDown = true;
+			//	ai1->collideRight = true;
+			//}
+			/*******************************************************/
+							//AI 3 collisions
+			/*******************************************************/
+			if (cp->pathOBB.SAT2D((ai3->charOBB))) {
+				glColor3f(1.0, 0.0, 0.0);
+				cp->pathOBB.drawOBB();
+				if (cp->charPassed == '[') {//left
+					ai3->Xchar += 2;
+					ai3->collideLeft = true;
+					ai3->collideRight = false;
+					ai3->collideUp = false;
+					ai3->collideDown = false;
+				}
+				else if (cp->charPassed == ']') {//right
+					ai3->Xchar -= 2;
+					ai3->collideRight = true;
+					ai3->collideLeft = false;
+					ai3->collideUp = false;
+					ai3->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && !(cp->charPassed == '`')) {//top path
+					ai3->Ychar -= 2;
+					ai3->collideUp = true;
+					//ai1->collideLeft = false;
+					ai3->collideRight = false;
+					ai3->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && !(cp->charPassed == '`')) {
+					ai3->Ychar -= 2;
+					ai3->collideUp = true;
+					ai3->collideLeft = true;
+					ai3->collideRight = false;
+					ai3->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && (cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai3->Ychar -= 2;
+					ai3->collideUp = true;
+					ai3->collideLeft = true;
+					ai3->collideRight = false;
+					ai3->collideDown = false;
+				}
+				else if ((cp->charPassed == '-') && !(cp->charPassed == '[') && (cp->charPassed == '`')) {
+					ai3->Ychar -= 2;
+					ai3->collideUp = true;
+					ai3->collideLeft = true;
+					ai3->collideRight = false;
+					ai3->collideDown = false;
+				}
+				else if (cp->charPassed == '~') { //bottom path
+					ai3->collideDown = true;
+					ai3->collideLeft = false;
+					ai3->collideRight = false;
+					ai3->collideUp = false;
+				}
+				else if (cp->charPassed == '`') { //top left corner path
+					ai3->collideUp = true;
+					ai3->collideLeft = true;
+					//ai1->collideRight = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == '"') { //top right corner path
+					ai3->collideUp = true;
+					ai3->collideRight = true;
+					//ai1->collideLeft = false;
+					//ai1->collideDown = false;
+				}
+				else if (cp->charPassed == ',') { //bottom left corner
+					ai3->collideDown = true;
+					ai3->collideLeft = true;
+					//ai1->collideUp = false;
+					//ai1->collideRight = false;
+				}
+				else if (cp->charPassed == '.') { //bottom right corner
+					ai3->collideDown = true;
+					ai3->collideRight = true;
+					//ai1->collideUp = false;
+					//ai1->collideLeft = false;
+				}
+			}
+			//else {
+			//	ai1->collideUp = true;
+			//	ai1->collideLeft = true;
+			//	ai1->collideDown = true;
+			//	ai1->collideRight = true;
+			//}
 
+			/***************************************************/
+							//2 player collisions
+			/***************************************************/
 			if (twoPlayerGame) {
 				if (cp->pathOBB.SAT2D((player2->charOBB))) {
 					//hanzo->collide = true;
@@ -522,20 +861,29 @@ void collisionChecking() {
 
 
 		//Chicken collision 
-
 		if (map->chickenPointer->itemOBB.SAT2D((player1->charOBB))) {
 			glColor3f(1.0, 0.0, 0.0);
 			map->chickenPointer->itemOBB.drawOBB();
-			cout << "This game is a piece of shit" << endl;
 			winCondition(1);
 		}
-		if (twoPlayerGame) {
+		else if (map->chickenPointer->itemOBB.SAT2D((ai1->charOBB))) {
+			glColor3f(1.0, 0.0, 0.0);
+			map->chickenPointer->itemOBB.drawOBB();
+			lossCondition(2);
+		}
+		else if (map->chickenPointer->itemOBB.SAT2D((ai2->charOBB))) {
+			glColor3f(1.0, 0.0, 0.0);
+			map->chickenPointer->itemOBB.drawOBB();
+			lossCondition(2);
+		}
+		else if (twoPlayerGame) {
 			if ((map->chickenPointer->itemOBB.SAT2D((player2->charOBB)))) {
 				glColor3f(0.0, 1.0, 0.0);
 				map->chickenPointer->itemOBB.drawOBB();
 				winCondition(2);
 			}
 		}
+		 
 	}
 }
 
@@ -546,6 +894,8 @@ void winCondition(int winType) {
 	delete player2;
 	delete chompsky;
 	delete owner;
+	delete ai1;
+	delete ai2;
 	menu = new Menu();
 	menu->init(screenHeight, screenWidth);
 	if (winType == 1 && !twoPlayerGame) {//player 1 got the chicken 
@@ -568,11 +918,14 @@ void lossCondition(int lossType) {
 	delete player2;
 	delete chompsky;
 	delete owner;
+	delete ai1;
 	menu = new Menu();
 	menu->init(screenHeight, screenWidth);
 	if (lossType == 1 && !twoPlayerGame) {//player 1 got the chicken 
-		cout << "you ran out of health :( !" << endl;
 		menu->outcomeCard = 2;
+	}
+	else if (lossType == 2 && !twoPlayerGame) {//player 1 got the chicken 
+		menu->outcomeCard = 3;
 	}
 	menu->display(screenHeight, screenWidth);
 }
